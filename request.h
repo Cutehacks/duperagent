@@ -64,6 +64,7 @@ protected slots:
     void handleFinished();
 
 protected:
+    void dispatchRequest();
     void timerEvent(QTimerEvent *event);
 
 private:
@@ -77,6 +78,7 @@ private:
     int m_timeout;
     int m_timer;
     int m_redirects;
+    int m_redirectCount;
     QUrlQuery m_query;
     QJSValue m_callback;
     QJSValue m_data;

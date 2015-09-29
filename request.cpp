@@ -28,7 +28,8 @@ RequestPrototype::RequestPrototype(QQmlEngine *engine, Method method, const QUrl
     m_multipart(0),
     m_timeout(-1),
     m_timer(0),
-    m_redirects(5)
+    m_redirects(5),
+    m_redirectCount(0)
 {
     m_request = new QNetworkRequest(QUrl(url.toString()));
     m_engine->setObjectOwnership(this, QQmlEngine::JavaScriptOwnership);
@@ -256,6 +257,15 @@ QJSValue RequestPrototype::end(QJSValue callback)
 {
     m_callback = callback;
 
+    dispatchRequest();
+
+    return self();
+}
+
+
+
+void RequestPrototype::dispatchRequest()
+{
     QUrl url = m_request->url();
     url.setQuery(m_query);
     m_request->setUrl(url);
@@ -295,20 +305,59 @@ QJSValue RequestPrototype::end(QJSValue callback)
     connect(m_reply, SIGNAL(finished()), this, SLOT(handleFinished()));
 
     m_timer = startTimer(m_timeout);
-
-    return self();
 }
+
 
 void RequestPrototype::handleFinished()
 {
     killTimer(m_timer);
+    QJSValue error;
 
-    // TODO: handle redirects
+    QVariant redir = m_reply->attribute(
+                QNetworkRequest::RedirectionTargetAttribute);
+    if (redir.isValid()) {
+        m_redirectCount++;
+        if (m_redirectCount <= m_redirects) {
+            QUrl location = m_request->url().resolved(redir.toUrl());
+            int status = m_reply->attribute(
+                        QNetworkRequest::HttpStatusCodeAttribute).toInt();
+
+            QNetworkRequest *req = new QNetworkRequest(*m_request);
+            req->setUrl(location);
+            delete m_request;
+            m_request = req;
+            delete m_reply;
+            m_reply = 0;
+
+            if (status >= 301 && status <= 303) {
+                if (m_method == Post) {
+                    // TODO: Strip Content-* headers
+
+                    // TODO: Strip send data
+
+                    m_multipart = 0;
+                }
+
+                if (status == 303 || m_method != Head) {
+                    m_method = Get;
+                }
+            } else if (status != 307 && status != 308) {
+                // Don't change methods on 307/308
+                qWarning("Unhandled redirect status code");
+                return;
+            }
+            dispatchRequest();
+            return;
+        } else {
+            // TODO: Update this with proper error handling
+            qWarning("Too many redirects");
+        }
+    }
 
     QJSValueList args;
 
     ResponsePrototype *rep = new ResponsePrototype(m_engine, m_reply);
-    args <<  QJSValue() << m_engine->newQObject(rep);
+    args << error << m_engine->newQObject(rep);
 
     if (m_callback.isCallable()) {
         m_callback.call(args);
