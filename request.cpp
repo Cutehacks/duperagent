@@ -260,10 +260,6 @@ QJSValue RequestPrototype::end(QJSValue callback)
     url.setQuery(m_query);
     m_request->setUrl(url);
 
-    if (m_method == Patch) {
-
-    }
-
     switch (m_method) {
     case Get:
         m_reply = m_network->get(*m_request);
