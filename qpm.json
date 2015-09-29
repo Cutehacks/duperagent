@@ -1,6 +1,6 @@
 {
   "name": "com.cutehacks.duperagent",
-  "description": "",
+  "description": "A QML implementation of SuperAgent HTTP client.",
   "author": {
     "name": "Jason Barron",
     "email": "jason@cutehacks.com"
@@ -10,7 +10,7 @@
     "url": "cutehacks/duperagent"
   },
   "version": {
-    "label": "0.9.0",
+    "label": "0.9.0"
   },
   "dependencies": [
   ],
