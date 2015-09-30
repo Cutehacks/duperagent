@@ -2,6 +2,7 @@
 #include <QtCore/QJsonArray>
 #include <QtCore/QJsonObject>
 #include <QtQml/QQmlEngine>
+#include <QtQml/QJSValueIterator>
 
 #include "serialization.h"
 
@@ -67,9 +68,51 @@ QJSValue JsonCodec::parseJsonValue(const QJsonValue &val)
     }
 }
 
-QByteArray JsonCodec::stringify(const QJSValue &)
+QByteArray JsonCodec::stringify(const QJSValue &json)
 {
-    return QByteArray();
+    QJsonDocument doc;
+
+    if (json.isObject()) {
+        doc.setObject(stringifyObject(json));
+    } else if (json.isArray()) {
+        doc.setArray(stringifyArray(json));
+    }
+
+    return doc.toJson();
+}
+
+QJsonObject JsonCodec::stringifyObject(const QJSValue &json) const
+{
+    QJsonObject object;
+    QJSValueIterator it(json);
+    while (it.next()) {
+        object.insert(it.name(), stringifyValue(it.value()));
+    }
+    return object;
+}
+
+QJsonArray JsonCodec::stringifyArray(const QJSValue &json) const
+{
+    QJsonArray array;
+    QJSValueIterator it(json);
+    while (it.next()) {
+        array.append(stringifyValue(it.value()));
+    }
+    return array;
+}
+
+QJsonValue JsonCodec::stringifyValue(const QJSValue &json) const
+{
+    if (json.isArray())
+        return QJsonValue(stringifyArray(json));
+    else if (json.isObject())
+        return QJsonValue(stringifyObject(json));
+    else if (json.isBool())
+        return QJsonValue(json.toBool());
+    else if (json.isNumber())
+        return QJsonValue(json.toNumber());
+    else
+        return QJsonValue(json.toString());
 }
 
 QPM_END_NAMESPACE(com, cutehacks, duperagent)

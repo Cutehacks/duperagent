@@ -32,6 +32,10 @@ protected:
     QJSValue parseJsonArray(const QJsonArray &);
     QJSValue parseJsonObject(const QJsonObject &);
     QJSValue parseJsonValue(const QJsonValue &);
+
+    QJsonObject stringifyObject(const QJSValue &) const;
+    QJsonArray stringifyArray(const QJSValue &) const;
+    QJsonValue stringifyValue(const QJSValue &) const;
 };
 
 QPM_END_NAMESPACE(com, cutehacks, duperagent)
