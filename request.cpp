@@ -291,7 +291,7 @@ QByteArray RequestPrototype::serializeData()
         JsonCodec json(m_engine);
         return json.stringify(m_data);
     }
-    return QByteArray();
+    return m_data.toString().toUtf8();
 }
 
 void RequestPrototype::dispatchRequest()
