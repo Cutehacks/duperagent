@@ -63,10 +63,6 @@ public:
 protected:
     bool typeEquals(int code) const;
     bool statusEquals(int code) const;
-    QJSValue parseJsonDocument(const QJsonDocument &) const;
-    QJSValue parseJsonArray(const QJsonArray &) const;
-    QJSValue parseJsonObject(const QJsonObject &) const;
-    QJSValue parseJsonValue(const QJsonValue &) const;
 
 private:
     QQmlEngine *m_engine;

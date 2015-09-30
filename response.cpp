@@ -3,13 +3,11 @@
 
 #include <QtCore/QRegExp>
 #include <QtCore/QTextCodec>
-#include <QtCore/QJsonDocument>
-#include <QtCore/QJsonArray>
-#include <QtCore/QJsonObject>
 #include <QtNetwork/QNetworkReply>
 #include <QtQml/QQmlEngine>
 
 #include "response.h"
+#include "serialization.h"
 
 QPM_BEGIN_NAMESPACE(com, cutehacks, duperagent)
 
@@ -31,8 +29,8 @@ ResponsePrototype::ResponsePrototype(QQmlEngine *engine, QNetworkReply *reply) :
 
     if (type.contains("application/json")) {
         // TODO: add error handling
-        QJsonDocument doc = QJsonDocument::fromJson(data, 0);
-        m_body = parseJsonDocument(doc);
+        JsonCodec json(m_engine);
+        m_body = json.parse(data);
     } else if (type.contains("application/x-www-form-urlencoded")) {
         // TODO: Implement parsing of form-urlencoded
     } else if (type.contains("multipart/form-data")) {
@@ -112,57 +110,6 @@ QJSValue ResponsePrototype::body() const
 QJSValue ResponsePrototype::header() const
 {
     return m_header;
-}
-
-QJSValue ResponsePrototype::parseJsonDocument(const QJsonDocument &doc) const
-{
-    if (doc.isObject()) {
-        return parseJsonObject(doc.object());
-    } else if (doc.isArray()) {
-        return parseJsonArray(doc.array());
-    } else if(doc.isNull()){
-        return QJSValue(QJSValue::NullValue);
-    } else {
-        return QJSValue();
-    }
-}
-
-QJSValue ResponsePrototype::parseJsonArray(const QJsonArray &array) const {
-    QJSValue a = m_engine->newArray(array.size());
-    int i = 0;
-    for (QJsonArray::ConstIterator it = array.constBegin(); it != array.constEnd(); it++) {
-        a.setProperty(i++, parseJsonValue(*it));
-    }
-    return a;
-}
-
-QJSValue ResponsePrototype::parseJsonObject(const QJsonObject &object) const
-{
-    QJSValue o = m_engine->newObject();
-    for (QJsonObject::ConstIterator it = object.constBegin(); it != object.constEnd(); it++) {
-        o.setProperty(it.key(), parseJsonValue(it.value()));
-    }
-    return o;
-}
-
-QJSValue ResponsePrototype::parseJsonValue(const QJsonValue &val) const
-{
-    switch (val.type()) {
-    case QJsonValue::Array:
-        return parseJsonArray(val.toArray());
-    case QJsonValue::Object:
-        return parseJsonObject(val.toObject());
-    case QJsonValue::Bool:
-        return QJSValue(val.toBool());
-    case QJsonValue::Double:
-        return QJSValue(val.toDouble());
-    case QJsonValue::String:
-        return QJSValue(val.toString());
-    case QJsonValue::Undefined:
-        return QJSValue(QJSValue::UndefinedValue);
-    case QJsonValue::Null:
-        return QJSValue(QJSValue::NullValue);
-    }
 }
 
 QPM_END_NAMESPACE(com, cutehacks, duperagent)
