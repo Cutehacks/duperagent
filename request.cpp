@@ -13,6 +13,7 @@
 
 #include "request.h"
 #include "response.h"
+#include "serialization.h"
 
 QPM_BEGIN_NAMESPACE(com, cutehacks, duperagent)
 
@@ -242,9 +243,27 @@ QJSValue RequestPrototype::send(const QJSValue &data)
             type = contentTypes["form"];
         }
         if (type == contentTypes["form"]) {
-
+            if (m_data.isString()) {
+                m_data = QJSValue(m_data.toString() + "&" + data.toString());
+            } else {
+                m_data = data;
+            }
+        } else {
+            if (m_data.isString()) {
+                m_data = QJSValue(m_data.toString() + data.toString());
+            } else {
+                m_data = data;
+            }
         }
+    } else {
+        m_data = data;
     }
+
+    if (type.isEmpty())
+        type = contentTypes["json"];
+
+    m_request->setHeader(QNetworkRequest::ContentTypeHeader, type);
+
     return self();
 }
 
@@ -262,7 +281,17 @@ QJSValue RequestPrototype::end(QJSValue callback)
     return self();
 }
 
+QByteArray RequestPrototype::serializeData()
+{
+    QByteArray type = m_request->header(
+                QNetworkRequest::ContentTypeHeader).toByteArray();
 
+    if (type.contains(contentTypes["json"])) {
+        JsonCodec json(m_engine);
+        return json.stringify(m_data);
+    }
+    return QByteArray();
+}
 
 void RequestPrototype::dispatchRequest()
 {
@@ -278,14 +307,14 @@ void RequestPrototype::dispatchRequest()
         if (m_multipart) {
             m_reply = m_network->post(*m_request, m_multipart);
         } else {
-            m_reply = m_network->post(*m_request, m_data.toString().toUtf8());
+            m_reply = m_network->post(*m_request, serializeData());
         }
         break;
     case Put:
         if (m_multipart) {
             m_reply = m_network->put(*m_request, m_multipart);
         } else {
-            m_reply = m_network->put(*m_request, m_data.toString().toUtf8());
+            m_reply = m_network->put(*m_request, serializeData());
         }
         break;
     case Delete:

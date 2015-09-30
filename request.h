@@ -66,6 +66,7 @@ protected slots:
 protected:
     void dispatchRequest();
     void timerEvent(QTimerEvent *event);
+    QByteArray serializeData();
 
 private:
     Method m_method;
