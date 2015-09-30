@@ -3,6 +3,7 @@
 
 #include <QtCore/QFile>
 #include <QtCore/QFileInfo>
+#include <QtCore/QBuffer>
 #include <QtCore/QMimeDatabase>
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkRequest>
@@ -322,7 +323,9 @@ void RequestPrototype::dispatchRequest()
         break;
     case Patch:
         m_request->setAttribute(QNetworkRequest::CustomVerbAttribute, "PATCH");
-        m_reply = m_network->sendCustomRequest(*m_request, "PATCH", 0);
+        m_rawData = serializeData();
+        m_reply = m_network->sendCustomRequest(*m_request, "PATCH",
+                                               new QBuffer(&m_rawData, this));
         break;
     case Head:
         m_reply = m_network->head(*m_request);

@@ -83,6 +83,7 @@ private:
     QUrlQuery m_query;
     QJSValue m_callback;
     QJSValue m_data;
+    QByteArray m_rawData;
 };
 
 QPM_END_NAMESPACE(com, cutehacks, duperagent)
