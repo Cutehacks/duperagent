@@ -7,7 +7,7 @@
   },
   "repository": {
     "type": "GITHUB",
-    "url": "cutehacks/duperagent"
+    "url": "https://github.com/Cutehacks/duperagent.git"
   },
   "version": {
     "label": "0.9.2"
