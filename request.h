@@ -8,6 +8,7 @@
 #include <QtCore/QObject>
 #include <QtCore/QUrlQuery>
 #include <QtNetwork/QNetworkAccessManager>
+#include <QtNetwork/QNetworkReply>
 #include <QtQml/QJSValue>
 
 #include "qpm.h"
@@ -30,6 +31,16 @@ public:
         Put     = QNetworkAccessManager::PutOperation,
         Patch   = QNetworkAccessManager::CustomOperation,
         Delete  = QNetworkAccessManager::DeleteOperation,
+    };
+
+    enum ErrorType {
+        Error,
+        InternalError,
+        RangeError,
+        ReferenceError,
+        SyntaxError,
+        TypeError,
+        URIError
     };
 
     RequestPrototype(QQmlEngine *, Method, const QUrl &);
@@ -62,11 +73,15 @@ signals:
 
 protected slots:
     void handleFinished();
+#ifndef QT_NO_SSL
+    void handleSslErrors(const QList<QSslError> &);
+#endif
 
 protected:
     void dispatchRequest();
     void timerEvent(QTimerEvent *event);
     QByteArray serializeData();
+    QJSValue createError(const QString&, ErrorType type = Error);
 
 private:
     Method m_method;
@@ -84,6 +99,7 @@ private:
     QJSValue m_callback;
     QJSValue m_data;
     QByteArray m_rawData;
+    QJSValue m_error;
 };
 
 QPM_END_NAMESPACE(com, cutehacks, duperagent)

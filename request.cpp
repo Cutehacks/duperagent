@@ -1,14 +1,17 @@
 // Copyright 2015 Cutehacks AS. All rights reserved.
 // License can be found in the LICENSE file.
 
+#include <QtDebug>
 #include <QtCore/QFile>
 #include <QtCore/QFileInfo>
 #include <QtCore/QBuffer>
 #include <QtCore/QMimeDatabase>
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkRequest>
-#include <QtNetwork/QNetworkReply>
 #include <QtNetwork/QHttpMultiPart>
+#ifndef QT_NO_SSL
+#include <QtNetwork/QSslError>
+#endif
 #include <QtQml/QQmlEngine>
 #include <QtQml/QJSValueIterator>
 
@@ -335,24 +338,27 @@ void RequestPrototype::dispatchRequest()
     }
 
     connect(m_reply, SIGNAL(finished()), this, SLOT(handleFinished()));
+#ifndef QT_NO_SSL
+    connect(m_reply, SIGNAL(sslErrors(QList<QSslError>)),
+            this, SLOT(handleSslErrors(QList<QSslError>)));
+#endif
 
     m_timer = startTimer(m_timeout);
 }
 
-
 void RequestPrototype::handleFinished()
 {
     killTimer(m_timer);
-    QJSValue error;
 
+    int status = m_reply->attribute(
+                QNetworkRequest::HttpStatusCodeAttribute).toInt();
     QVariant redir = m_reply->attribute(
                 QNetworkRequest::RedirectionTargetAttribute);
+
     if (redir.isValid()) {
         m_redirectCount++;
         if (m_redirectCount <= m_redirects) {
             QUrl location = m_request->url().resolved(redir.toUrl());
-            int status = m_reply->attribute(
-                        QNetworkRequest::HttpStatusCodeAttribute).toInt();
 
             QNetworkRequest *req = new QNetworkRequest(*m_request);
             req->setUrl(location);
@@ -381,23 +387,72 @@ void RequestPrototype::handleFinished()
             dispatchRequest();
             return;
         } else {
-            // TODO: Update this with proper error handling
-            qWarning("Too many redirects");
+            m_error = createError("Too many redirects");
+        }
+    }
+
+    if (!m_error.isError() && m_reply->error() != QNetworkReply::NoError) {
+        m_error = createError(m_reply->errorString());
+        m_error.setProperty("code", m_reply->error());
+        if (status >= 400) {
+            m_error.setProperty("status", status);
+            // TODO: Add "method" property
         }
     }
 
     QJSValueList args;
 
     ResponsePrototype *rep = new ResponsePrototype(m_engine, m_reply);
-    args << error << m_engine->newQObject(rep);
+    args << m_error << m_engine->newQObject(rep);
 
     if (m_callback.isCallable()) {
         m_callback.call(args);
+    } else {
+        qWarning() << QString("%1 is not callable").arg(m_callback.toString());
     }
 }
 
+QJSValue RequestPrototype::createError(const QString &message, ErrorType type)
+{
+    QString err;
+    switch (type) {
+    case RangeError:
+        err = "RangeError";
+        break;
+    case ReferenceError:
+        err = "ReferenceError";
+        break;
+    case SyntaxError:
+        err = "SyntaxError";
+        break;
+    case TypeError:
+        err = "TypeError";
+        break;
+    case URIError:
+        err = "URIError";
+        break;
+    case InternalError:
+        err = "InternalError";
+        break;
+    case Error:
+    default:
+        err = "Error";
+    }
+
+    QString script = "new %1('%2');";
+    return m_engine->evaluate(script.arg(err).arg(message));
+}
+
+#ifndef QT_NO_SSL
+void RequestPrototype::handleSslErrors(const QList<QSslError> &errors)
+{
+
+}
+#endif
+
 void RequestPrototype::timerEvent(QTimerEvent *)
 {
+    m_error = createError(QString("Timeout of %1 ms exceeded").arg(m_timeout));
     abort();
 }
 
