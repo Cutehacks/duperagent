@@ -22,19 +22,21 @@ ResponsePrototype::ResponsePrototype(QQmlEngine *engine, QNetworkReply *reply) :
         m_charset = charsetRegexp.capturedTexts().at(1);
     }
 
-    QByteArray data = m_reply->readAll();
+    if (m_reply->isReadable()) {
+        QByteArray data = m_reply->readAll();
 
-    QTextCodec *text = QTextCodec::codecForName(m_charset.toLatin1());
-    m_text = text ? text->makeDecoder()->toUnicode(data) : QString::fromUtf8(data);
+        QTextCodec *text = QTextCodec::codecForName(m_charset.toLatin1());
+        m_text = text ? text->makeDecoder()->toUnicode(data) : QString::fromUtf8(data);
 
-    if (type.contains("application/json")) {
-        // TODO: add error handling
-        JsonCodec json(m_engine);
-        m_body = json.parse(data);
-    } else if (type.contains("application/x-www-form-urlencoded")) {
-        // TODO: Implement parsing of form-urlencoded
-    } else if (type.contains("multipart/form-data")) {
-        // TODO: Implement parsing of form-data
+        if (type.contains("application/json")) {
+            // TODO: add error handling
+            JsonCodec json(m_engine);
+            m_body = json.parse(data);
+        } else if (type.contains("application/x-www-form-urlencoded")) {
+            // TODO: Implement parsing of form-urlencoded
+        } else if (type.contains("multipart/form-data")) {
+            // TODO: Implement parsing of form-data
+        }
     }
 
     m_header = m_engine->newObject();
