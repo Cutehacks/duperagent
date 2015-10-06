@@ -19,6 +19,42 @@ of XmlHttpRequest.
 At the point in time, the API should be almost identical to that of SuperAgent so that documentation
 is recommended.
 
+That being said, the following API additions are also available:
+
+## config()
+
+A function for setting global configuration options for the agent. This function should be called
+once before any requests are made. It is good practice to call this from a `Component.onCompleted`
+signal. For example:
+
+```
+    Component.onCompleted: {
+        Http.request.config({
+            cache: false
+        });
+    }
+```
+
+The following is a list of supported configuration options:
+
+### `cache`
+
+This option controls the cache behavior of the agent. The default is to create a QNetworkDiskCache with
+a sensible path for the platform. If you wish to disable this behavior, for example because you have your
+own cache, you can set this property to `false`. The property can be further customized by passing an object.
+
+```
+    Http.request.config({
+        cache: {
+            maxSize: 20000
+        }
+    });
+```
+
+* `maxSize`: The maximum size of the cache
+
+
+
 #Usage
 
 First install the library via qpm:

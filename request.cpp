@@ -17,6 +17,7 @@
 
 #include "request.h"
 #include "response.h"
+#include "config.h"
 #include "serialization.h"
 
 QPM_BEGIN_NAMESPACE(com, cutehacks, duperagent)
@@ -36,6 +37,7 @@ RequestPrototype::RequestPrototype(QQmlEngine *engine, Method method, const QUrl
     m_redirects(5),
     m_redirectCount(0)
 {
+    getConfig()->init(m_engine);
     m_request = new QNetworkRequest(QUrl(url.toString()));
     m_engine->setObjectOwnership(this, QQmlEngine::JavaScriptOwnership);
     m_self = m_engine->newQObject(this);

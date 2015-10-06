@@ -1,5 +1,6 @@
 #include "duperagent.h"
 #include "request.h"
+#include "config.h"
 
 QPM_BEGIN_NAMESPACE(com, cutehacks, duperagent)
 
@@ -13,6 +14,11 @@ Request::Request(QQmlEngine *engine, QObject *parent) :
     contentTypes.insert("xml", "application/xml");
     contentTypes.insert("form", "application/x-www-form-urlencoded");
     contentTypes.insert("form-data", "application/x-www-form-urlencoded");
+}
+
+void Request::config(const QJSValue &options)
+{
+    getConfig()->setOptions(options);
 }
 
 QJSValue Request::get(const QJSValue &url, const QJSValue &data, const QJSValue &fn) const

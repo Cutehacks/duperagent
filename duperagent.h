@@ -18,6 +18,8 @@ class Request : public QObject
 public:
     Request(QQmlEngine *engine, QObject *parent = 0);
 
+    Q_INVOKABLE void config(const QJSValue &);
+
     Q_INVOKABLE QJSValue get(const QJSValue&,
                               const QJSValue& = QJSValue(),
                               const QJSValue& = QJSValue()) const;
