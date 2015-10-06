@@ -93,6 +93,11 @@ bool ResponsePrototype::notAcceptable() const { return statusEquals(406); }
 bool ResponsePrototype::notFound() const { return statusEquals(404); }
 bool ResponsePrototype::forbidden() const { return statusEquals(403); }
 
+bool ResponsePrototype::fromCache() const
+{
+    return m_reply->attribute(QNetworkRequest::SourceIsFromCacheAttribute).toBool();
+}
+
 QString ResponsePrototype::text() const
 {
     return m_text;

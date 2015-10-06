@@ -29,6 +29,8 @@ class ResponsePrototype : public QObject {
     Q_PROPERTY(bool notFound READ notFound)
     Q_PROPERTY(bool forbidden READ forbidden)
 
+    Q_PROPERTY(bool fromCache READ fromCache)
+
     Q_PROPERTY(int status READ statusCode)
     Q_PROPERTY(int statusType READ statusType)
     Q_PROPERTY(QString text READ text)
@@ -52,6 +54,8 @@ public:
     bool notAcceptable() const;
     bool notFound() const;
     bool forbidden() const;
+
+    bool fromCache() const;
 
     int statusCode() const;
     int statusType() const;
