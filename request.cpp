@@ -339,6 +339,8 @@ void RequestPrototype::dispatchRequest()
         qWarning("Unsupported method");
     }
 
+    emit started();
+
     connect(m_reply, SIGNAL(finished()), this, SLOT(handleFinished()));
 #ifndef QT_NO_SSL
     connect(m_reply, SIGNAL(sslErrors(QList<QSslError>)),

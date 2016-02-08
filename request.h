@@ -67,6 +67,7 @@ public:
     inline QJSValue self() const { return m_self; }
 
 signals:
+    void started();
     void progress(int loaded, int total);
     void response(QJSValue);
     void end();
