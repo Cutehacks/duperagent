@@ -43,7 +43,7 @@ ResponsePrototype::ResponsePrototype(QQmlEngine *engine, QNetworkReply *reply) :
     QList<QNetworkReply::RawHeaderPair>::const_iterator it = m_reply->rawHeaderPairs().cbegin();
     for(; it != m_reply->rawHeaderPairs().cend(); it++) {
         m_header.setProperty(
-                    QString::fromUtf8((*it).first),
+                    QString::fromUtf8((*it).first).toLower(),
                     QString::fromUtf8((*it).second));
     }
 
