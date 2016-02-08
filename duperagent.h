@@ -1,6 +1,9 @@
 // Copyright 2015 Cutehacks AS. All rights reserved.
 // License can be found in the LICENSE file.
 
+#ifndef DUPERAGENT_H
+#define DUPERAGENT_H
+
 #include <QtCore/QObject>
 #include <QtQml/QJSValue>
 
@@ -49,3 +52,5 @@ static QObject *request_provider(QQmlEngine *engine, QJSEngine *scriptEngine)
 }
 
 QPM_END_NAMESPACE(com, cutehacks, duperagent)
+
+#endif // DUPERAGENT_H
