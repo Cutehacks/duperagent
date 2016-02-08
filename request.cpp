@@ -373,7 +373,7 @@ void RequestPrototype::handleFinished()
             req->setUrl(location);
             delete m_request;
             m_request = req;
-            delete m_reply;
+            m_reply->deleteLater();
             m_reply = 0;
 
             if (status >= 301 && status <= 303) {
