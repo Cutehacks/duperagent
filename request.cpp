@@ -361,6 +361,10 @@ void RequestPrototype::handleFinished()
         m_redirectCount++;
         if (m_redirectCount <= m_redirects) {
             QUrl location = m_request->url().resolved(redir.toUrl());
+            if (location.scheme() == "file") {
+                qWarning("Invalid redirect URL scheme");
+                return;
+            }
 
             QNetworkRequest *req = new QNetworkRequest(*m_request);
             req->setUrl(location);
