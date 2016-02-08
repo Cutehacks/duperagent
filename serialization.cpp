@@ -96,7 +96,8 @@ QJsonArray JsonCodec::stringifyArray(const QJSValue &json) const
     QJsonArray array;
     QJSValueIterator it(json);
     while (it.next()) {
-        array.append(stringifyValue(it.value()));
+        if (it.hasNext()) // skip last item which is length
+            array.append(stringifyValue(it.value()));
     }
     return array;
 }
