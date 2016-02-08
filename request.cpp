@@ -345,7 +345,8 @@ void RequestPrototype::dispatchRequest()
             this, SLOT(handleSslErrors(QList<QSslError>)));
 #endif
 
-    m_timer = startTimer(m_timeout);
+    if (m_timeout > 0)
+        m_timer = startTimer(m_timeout);
 }
 
 void RequestPrototype::handleFinished()
