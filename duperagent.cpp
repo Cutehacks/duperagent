@@ -2,7 +2,7 @@
 #include "request.h"
 #include "config.h"
 
-QPM_BEGIN_NAMESPACE(com, cutehacks, duperagent)
+namespace com { namespace cutehacks { namespace duperagent {
 
 extern ContentTypeMap contentTypes;
 
@@ -135,4 +135,4 @@ QJSValue Request::put(const QJSValue &url, const QJSValue &data, const QJSValue 
     return proto->self();
 }
 
-QPM_END_NAMESPACE(com, cutehacks, duperagent)
+} } }

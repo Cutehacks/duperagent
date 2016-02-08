@@ -20,7 +20,7 @@
 #include "config.h"
 #include "serialization.h"
 
-QPM_BEGIN_NAMESPACE(com, cutehacks, duperagent)
+namespace com { namespace cutehacks { namespace duperagent {
 
 ContentTypeMap contentTypes;
 
@@ -465,4 +465,4 @@ void RequestPrototype::timerEvent(QTimerEvent *)
     abort();
 }
 
-QPM_END_NAMESPACE(com, cutehacks, duperagent)
+} } }

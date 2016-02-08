@@ -11,7 +11,7 @@ class QNetworkReply;
 
 #include "qpm.h"
 
-QPM_BEGIN_NAMESPACE(com, cutehacks, duperagent)
+namespace com { namespace cutehacks { namespace duperagent {
 
 class ResponsePrototype : public QObject {
     Q_OBJECT
@@ -77,6 +77,6 @@ private:
     QJSValue m_header;
 };
 
-QPM_END_NAMESPACE(com, cutehacks, duperagent)
+} } }
 
 #endif // RESPONSE_H

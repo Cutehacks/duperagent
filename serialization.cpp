@@ -6,7 +6,7 @@
 
 #include "serialization.h"
 
-QPM_BEGIN_NAMESPACE(com, cutehacks, duperagent)
+namespace com { namespace cutehacks { namespace duperagent {
 
 BodyCodec::BodyCodec(QQmlEngine *engine) : m_engine(engine) {}
 
@@ -115,5 +115,5 @@ QJsonValue JsonCodec::stringifyValue(const QJSValue &json) const
         return QJsonValue(json.toString());
 }
 
-QPM_END_NAMESPACE(com, cutehacks, duperagent)
+} } }
 

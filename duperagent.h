@@ -13,7 +13,7 @@
 class QQmlEngine;
 class QJsEngine;
 
-QPM_BEGIN_NAMESPACE(com, cutehacks, duperagent)
+namespace com { namespace cutehacks { namespace duperagent {
 
 class Request : public QObject
 {
@@ -61,6 +61,6 @@ static void registerEngine(QQmlEngine *)
         request_provider);
 }
 
-QPM_END_NAMESPACE(com, cutehacks, duperagent)
+} } }
 
 #endif // DUPERAGENT_H

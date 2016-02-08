@@ -7,7 +7,7 @@
 
 class QQmlEngine;
 
-QPM_BEGIN_NAMESPACE(com, cutehacks, duperagent)
+namespace com { namespace cutehacks { namespace duperagent {
 
 class BodyCodec
 {
@@ -38,6 +38,6 @@ protected:
     QJsonValue stringifyValue(const QJSValue &) const;
 };
 
-QPM_END_NAMESPACE(com, cutehacks, duperagent)
+} } }
 
 #endif // SERIALIZATION_H

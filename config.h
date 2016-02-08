@@ -8,7 +8,7 @@
 
 class QQmlEngine;
 
-QPM_BEGIN_NAMESPACE(com, cutehacks, duperagent)
+namespace com { namespace cutehacks { namespace duperagent {
 
 class Config
 {
@@ -26,6 +26,6 @@ private:
 
 Q_GLOBAL_STATIC(Config, getConfig)
 
-QPM_END_NAMESPACE(com, cutehacks, duperagent)
+} } }
 
 #endif // CONFIG_H

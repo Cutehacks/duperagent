@@ -6,7 +6,7 @@
 
 #include "config.h"
 
-QPM_BEGIN_NAMESPACE(com, cutehacks, duperagent)
+namespace com { namespace cutehacks { namespace duperagent {
 
 static const char *PROP_CACHE           = "cache";
 static const char *PROP_CACHE_MAX_SIZE  = "maxSize";
@@ -46,5 +46,5 @@ void Config::setOptions(const QJSValue &options)
     }
 }
 
-QPM_END_NAMESPACE(com, cutehacks, duperagent)
+} } }
 

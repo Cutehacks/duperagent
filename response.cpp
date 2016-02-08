@@ -9,7 +9,7 @@
 #include "response.h"
 #include "serialization.h"
 
-QPM_BEGIN_NAMESPACE(com, cutehacks, duperagent)
+namespace com { namespace cutehacks { namespace duperagent {
 
 ResponsePrototype::ResponsePrototype(QQmlEngine *engine, QNetworkReply *reply) : QObject(0),
     m_engine(engine),
@@ -119,4 +119,4 @@ QJSValue ResponsePrototype::header() const
     return m_header;
 }
 
-QPM_END_NAMESPACE(com, cutehacks, duperagent)
+} } }

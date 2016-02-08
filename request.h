@@ -16,7 +16,7 @@
 class QHttpMultiPart;
 class QQmlEngine;
 
-QPM_BEGIN_NAMESPACE(com, cutehacks, duperagent)
+namespace com { namespace cutehacks { namespace duperagent {
 
 typedef QHash<QString, QByteArray> ContentTypeMap;
 
@@ -103,6 +103,6 @@ private:
     QJSValue m_error;
 };
 
-QPM_END_NAMESPACE(com, cutehacks, duperagent)
+} } }
 
 #endif // REQUEST_H
