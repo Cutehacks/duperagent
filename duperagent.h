@@ -6,6 +6,7 @@
 
 #include <QtCore/QObject>
 #include <QtQml/QJSValue>
+#include <QtQml/qqml.h>
 
 #include "qpm.h"
 
@@ -49,6 +50,15 @@ static QObject *request_provider(QQmlEngine *engine, QJSEngine *scriptEngine)
 {
     Q_UNUSED(scriptEngine)
     return new Request(engine);
+}
+
+static void registerEngine(QQmlEngine *)
+{
+    qmlRegisterSingletonType<Request>(
+        "com.cutehacks.duperagent",
+        1, 0,
+        "request",
+        request_provider);
 }
 
 QPM_END_NAMESPACE(com, cutehacks, duperagent)
