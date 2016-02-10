@@ -104,16 +104,21 @@ QJsonArray JsonCodec::stringifyArray(const QJSValue &json) const
 
 QJsonValue JsonCodec::stringifyValue(const QJSValue &json) const
 {
-    if (json.isArray())
+    if (json.isArray()) {
         return QJsonValue(stringifyArray(json));
-    else if (json.isObject())
-        return QJsonValue(stringifyObject(json));
-    else if (json.isBool())
+    } else if (json.isObject()) {
+        QJSValue toJSON = json.property("toJSON");
+        if (toJSON.isCallable())
+            return stringifyValue(toJSON.callWithInstance(json));
+        else
+            return QJsonValue(stringifyObject(json));
+    } else if (json.isBool()) {
         return QJsonValue(json.toBool());
-    else if (json.isNumber())
+    } else if (json.isNumber()) {
         return QJsonValue(json.toNumber());
-    else
+    } else {
         return QJsonValue(json.toString());
+    }
 }
 
 } } }
