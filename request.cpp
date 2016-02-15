@@ -13,12 +13,18 @@
 #include <QtNetwork/QSslError>
 #endif
 #include <QtQml/QQmlEngine>
-#include <QtQml/QJSValueIterator>
 
 #include "request.h"
 #include "response.h"
 #include "config.h"
 #include "serialization.h"
+
+#if QT_VERSION < QT_VERSION_CHECK(5, 6, 0)
+#include "jsvalueiterator.h"
+#else
+#include <QtQml/QJSValueIterator>
+typedef QJSValueIterator JSValueIterator;
+#endif
 
 namespace com { namespace cutehacks { namespace duperagent {
 
@@ -81,7 +87,7 @@ QJSValue RequestPrototype::abort()
 QJSValue RequestPrototype::set(const QJSValue &field, const QJSValue &val)
 {
     if (field.isObject()) {
-        QJSValueIterator it(field);
+        JSValueIterator it(field);
         while (it.next()) {
             m_request->setRawHeader(
                         it.name().toUtf8(),
@@ -151,7 +157,7 @@ QJSValue RequestPrototype::redirects(int redirects)
 QJSValue RequestPrototype::query(const QJSValue &query)
 {
     if (query.isObject()) {
-        QJSValueIterator it(query);
+        JSValueIterator it(query);
         while (it.next()) {
             m_query.addQueryItem(
                         it.name(),
@@ -240,8 +246,8 @@ QJSValue RequestPrototype::send(const QJSValue &data)
 
     if (data.isObject() && m_data.isObject()) {
         // merge with existing data
-        QJSValueIterator it(data);
-        while (it.hasNext()) {
+        JSValueIterator it(data);
+        while (it.next()) {
             m_data.setProperty(it.name(), it.value());
         }
     } else if(data.isString()) {

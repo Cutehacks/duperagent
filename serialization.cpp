@@ -2,9 +2,15 @@
 #include <QtCore/QJsonArray>
 #include <QtCore/QJsonObject>
 #include <QtQml/QQmlEngine>
-#include <QtQml/QJSValueIterator>
 
 #include "serialization.h"
+
+#if QT_VERSION < QT_VERSION_CHECK(5, 6, 0)
+#include "jsvalueiterator.h"
+#else
+#include <QtQml/QJSValueIterator>
+typedef QJSValueIterator JSValueIterator;
+#endif
 
 namespace com { namespace cutehacks { namespace duperagent {
 
@@ -84,7 +90,7 @@ QByteArray JsonCodec::stringify(const QJSValue &json)
 QJsonObject JsonCodec::stringifyObject(const QJSValue &json) const
 {
     QJsonObject object;
-    QJSValueIterator it(json);
+    JSValueIterator it(json);
     while (it.next()) {
         object.insert(it.name(), stringifyValue(it.value()));
     }
@@ -94,7 +100,7 @@ QJsonObject JsonCodec::stringifyObject(const QJSValue &json) const
 QJsonArray JsonCodec::stringifyArray(const QJSValue &json) const
 {
     QJsonArray array;
-    QJSValueIterator it(json);
+    JSValueIterator it(json);
     while (it.next()) {
         if (it.hasNext()) // skip last item which is length
             array.append(stringifyValue(it.value()));
