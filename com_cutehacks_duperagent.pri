@@ -4,6 +4,7 @@ HEADERS += $$PWD/duperagent.h \
     $$PWD/request.h \
     $$PWD/response.h \
     $$PWD/serialization.h \
+    $$PWD/jsvalueiterator.h \
     $$PWD/config.h
 
 SOURCES += $$PWD/duperagent.cpp \
