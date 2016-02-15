@@ -241,7 +241,7 @@ QJSValue RequestPrototype::send(const QJSValue &data)
     if (data.isObject() && m_data.isObject()) {
         // merge with existing data
         QJSValueIterator it(data);
-        while (it.hasNext()) {
+        while (it.next()) {
             m_data.setProperty(it.name(), it.value());
         }
     } else if(data.isString()) {
