@@ -84,7 +84,7 @@ QByteArray JsonCodec::stringify(const QJSValue &json)
         doc.setArray(stringifyArray(json));
     }
 
-    return doc.toJson();
+    return doc.toJson(QJsonDocument::Compact);
 }
 
 QJsonObject JsonCodec::stringifyObject(const QJSValue &json) const
