@@ -1,6 +1,8 @@
 #include <QtCore/QJsonDocument>
 #include <QtCore/QJsonArray>
 #include <QtCore/QJsonObject>
+#include <QtCore/QStringBuilder>
+#include <QtCore/QUrlQuery>
 #include <QtQml/QQmlEngine>
 
 #include "serialization.h"
@@ -13,6 +15,10 @@ typedef QJSValueIterator JSValueIterator;
 #endif
 
 namespace com { namespace cutehacks { namespace duperagent {
+
+static const QChar EQUALS('=');
+static const QChar OPEN_SQUARE('[');
+static const QChar CLOSE_SQUARE(']');
 
 BodyCodec::BodyCodec(QQmlEngine *engine) : m_engine(engine) {}
 
@@ -127,5 +133,68 @@ QJsonValue JsonCodec::stringifyValue(const QJSValue &json) const
     }
 }
 
+FormUrlEncodedCodec::FormUrlEncodedCodec(QQmlEngine *engine) : BodyCodec(engine)
+{ }
+
+QByteArray FormUrlEncodedCodec::stringify(const QJSValue &json)
+{
+    QueryItems items;
+    JSValueIterator it(json);
+    while (it.next()) {
+        QString key = it.name();
+        items << stringifyValue(key, it.value());
+    }
+
+    QUrlQuery query;
+    query.setQueryItems(items);
+    return query.toString(QUrl::FullyEncoded).toUtf8();
+}
+
+QueryItems FormUrlEncodedCodec::stringifyObject(const QString& prefix, const QJSValue &json) const
+{
+    QueryItems items;
+    JSValueIterator it(json);
+    while (it.next()) {
+        items << stringifyValue(prefix % OPEN_SQUARE % it.name() % CLOSE_SQUARE, it.value());
+    }
+    return items;
+}
+
+QueryItems FormUrlEncodedCodec::stringifyArray(const QString& prefix, const QJSValue &json) const
+{
+    QueryItems items;
+    JSValueIterator it(json);
+    while (it.next()) {
+        if (it.hasNext()) //skip last item which is length
+            items << stringifyValue(prefix % OPEN_SQUARE % it.name() % CLOSE_SQUARE, it.value());
+    }
+    return items;
+}
+
+QueryItems FormUrlEncodedCodec::stringifyValue(const QString& prefix, const QJSValue &json) const
+{
+    if (json.isArray()) {
+        return stringifyArray(prefix, json);
+    } else if (json.isObject()) {
+        QJSValue toJSON = json.property("toJSON");
+        if (toJSON.isCallable())
+            return stringifyValue(prefix, toJSON.callWithInstance(json));
+        else
+            return stringifyObject(prefix, json);
+    } else if (json.isNull()) {
+        return QueryItems() << QPair<QString, QString>(prefix, QString());
+    } else if (json.hasProperty("toJSON") && json.property("toJSON").isCallable()){
+        return QueryItems() << QPair<QString, QString>(
+                    prefix, json.property("toJSON").callWithInstance(json).toString());
+    } else {
+        return QueryItems() << QPair<QString, QString>(prefix, json.toString());
+    }
+}
+
+QJSValue FormUrlEncodedCodec::parse(const QByteArray &str)
+{
+    QJSValue json = m_engine->newObject();
+    return json;
+}
 } } }
 

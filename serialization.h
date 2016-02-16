@@ -9,6 +9,8 @@ class QQmlEngine;
 
 namespace com { namespace cutehacks { namespace duperagent {
 
+typedef QList<QPair<QString, QString> > QueryItems;
+
 class BodyCodec
 {
 public:
@@ -36,6 +38,21 @@ protected:
     QJsonObject stringifyObject(const QJSValue &) const;
     QJsonArray stringifyArray(const QJSValue &) const;
     QJsonValue stringifyValue(const QJSValue &) const;
+};
+
+class FormUrlEncodedCodec : public BodyCodec
+{
+public:
+    FormUrlEncodedCodec(QQmlEngine *);
+
+public:
+    QByteArray stringify(const QJSValue &);
+    QJSValue parse(const QByteArray &);
+
+protected:
+    QueryItems stringifyObject(const QString&, const QJSValue &) const;
+    QueryItems stringifyArray(const QString&, const QJSValue &) const;
+    QueryItems stringifyValue(const QString&, const QJSValue &) const;
 };
 
 } } }

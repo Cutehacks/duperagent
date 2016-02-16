@@ -301,6 +301,9 @@ QByteArray RequestPrototype::serializeData()
     if (type.contains(contentTypes["json"])) {
         JsonCodec json(m_engine);
         return json.stringify(m_data);
+    } else if (type.contains(contentTypes["form"])) {
+        FormUrlEncodedCodec urlencoded(m_engine);
+        return urlencoded.stringify(m_data);
     }
     return m_data.toString().toUtf8();
 }
