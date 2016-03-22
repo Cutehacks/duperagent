@@ -18,7 +18,7 @@ Request::Request(QQmlEngine *engine, QObject *parent) :
 
 void Request::config(const QJSValue &options)
 {
-    getConfig()->setOptions(options);
+    Config::instance()->setOptions(options);
 }
 
 QJSValue Request::get(const QJSValue &url, const QJSValue &data, const QJSValue &fn) const

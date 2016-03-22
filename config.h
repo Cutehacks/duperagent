@@ -17,14 +17,14 @@ public:
     void init(QQmlEngine *);
     void setOptions(const QJSValue&);
 
+    static Config* instance();
+
 private:
     bool m_doneInit;
     bool m_noCache;
     QString m_cachePath;
     qint64 m_maxCacheSize;
 };
-
-Q_GLOBAL_STATIC(Config, getConfig)
 
 } } }
 

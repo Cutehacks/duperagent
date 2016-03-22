@@ -11,6 +11,8 @@ namespace com { namespace cutehacks { namespace duperagent {
 static const char *PROP_CACHE           = "cache";
 static const char *PROP_CACHE_MAX_SIZE  = "maxSize";
 
+Q_GLOBAL_STATIC(Config, globalConfig)
+
 Config::Config() :
     m_doneInit(false),
     m_noCache(false),
@@ -32,6 +34,12 @@ void Config::init(QQmlEngine *engine)
             cache->setMaximumCacheSize(m_maxCacheSize);
         engine->networkAccessManager()->setCache(cache);
     }
+}
+
+Config* Config::instance()
+{
+    Config *instance = globalConfig;
+    return instance;
 }
 
 void Config::setOptions(const QJSValue &options)
