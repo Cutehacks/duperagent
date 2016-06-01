@@ -206,7 +206,8 @@ QJSValue RequestPrototype::attach(const QJSValue &name, const QJSValue &path,
     dispositionHeader += name.toString();
     dispositionHeader += "\";";
 
-    QFile *file = new QFile(path.toString(), m_multipart);
+    QUrl url(path.toString());
+    QFile *file = new QFile(url.toLocalFile(), m_multipart);
 
     if (!file->exists()) {
         qWarning("File does not exist");
