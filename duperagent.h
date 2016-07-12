@@ -46,21 +46,6 @@ private:
     QQmlEngine *m_engine;
 };
 
-static QObject *request_provider(QQmlEngine *engine, QJSEngine *scriptEngine)
-{
-    Q_UNUSED(scriptEngine)
-    return new Request(engine);
-}
-
-static void registerEngine(QQmlEngine *)
-{
-    qmlRegisterSingletonType<Request>(
-        "com.cutehacks.duperagent",
-        1, 0,
-        "request",
-        request_provider);
-}
-
 } } }
 
 #endif // DUPERAGENT_H

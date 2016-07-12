@@ -63,22 +63,7 @@ First install the library via qpm:
 qpm install com.cutehacks.duperagent
 ```
 
-Next register the types in your main.cpp (qpm will automate this in the future):
-
-```
-#include "com/cutehacks/duperagent/duperagent.h"
-using namespace com::cutehacks;
-
-...
-
-    qmlRegisterSingletonType<duperagent::Request>(
-                "com.cutehacks.duperagent",
-                1, 0,
-                "request",
-                duperagent::request_provider);
-```
-
-Finally, import the module and start using it inside your .qml files:
+Import the module and start using it inside your .qml files:
 
 ```
 import com.cutehacks.duperagent 1.0 as Http

@@ -1,3 +1,4 @@
+#include <QtCore/QCoreApplication>
 #include "duperagent.h"
 #include "request.h"
 #include "config.h"
@@ -134,5 +135,21 @@ QJSValue Request::put(const QJSValue &url, const QJSValue &data, const QJSValue 
 
     return proto->self();
 }
+
+static QObject *request_provider(QQmlEngine *engine, QJSEngine *)
+{
+    return new Request(engine);
+}
+
+static void registerTypes()
+{
+    qmlRegisterSingletonType<Request>(
+        "com.cutehacks.duperagent",
+        1, 0,
+        "request",
+        request_provider);
+}
+
+Q_COREAPP_STARTUP_FUNCTION(registerTypes);
 
 } } }
