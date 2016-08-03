@@ -45,6 +45,7 @@ RequestPrototype::RequestPrototype(QQmlEngine *engine, Method method, const QUrl
 {
     Config::instance()->init(m_engine);
     m_request = new QNetworkRequest(QUrl(url.toString()));
+    m_query = QUrlQuery(url);
     m_engine->setObjectOwnership(this, QQmlEngine::JavaScriptOwnership);
     m_self = m_engine->newQObject(this);
 }
