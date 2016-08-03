@@ -1,7 +1,10 @@
 #include <QtCore/QCoreApplication>
+#include <QtQml/QQmlEngine>
+
 #include "duperagent.h"
 #include "request.h"
 #include "config.h"
+#include "cookiejar.h"
 
 namespace com { namespace cutehacks { namespace duperagent {
 
@@ -136,6 +139,28 @@ QJSValue Request::put(const QJSValue &url, const QJSValue &data, const QJSValue 
     return proto->self();
 }
 
+QJSValue Request::cookie() const
+{
+    Config::instance()->init(m_engine);
+
+    CookieJar *jar = qobject_cast<CookieJar*>(m_engine->networkAccessManager()->cookieJar());
+    if (!jar)
+        return QJSValue("");
+
+    return QJSValue(jar->cookies());
+}
+
+void Request::setCookie(const QJSValue &cookie)
+{
+    Config::instance()->init(m_engine);
+
+    CookieJar *jar = qobject_cast<CookieJar*>(m_engine->networkAccessManager()->cookieJar());
+    if (!jar)
+        return;
+
+    jar->addCookie(cookie.toString());
+}
+
 static QObject *request_provider(QQmlEngine *engine, QJSEngine *)
 {
     return new Request(engine);
@@ -150,6 +175,6 @@ static void registerTypes()
         request_provider);
 }
 
-Q_COREAPP_STARTUP_FUNCTION(registerTypes);
+Q_COREAPP_STARTUP_FUNCTION(registerTypes)
 
 } } }

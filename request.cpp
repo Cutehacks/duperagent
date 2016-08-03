@@ -463,7 +463,7 @@ QJSValue RequestPrototype::createError(const QString &message, ErrorType type)
 }
 
 #ifndef QT_NO_SSL
-void RequestPrototype::handleSslErrors(const QList<QSslError> &errors)
+void RequestPrototype::handleSslErrors(const QList<QSslError> &)
 {
 
 }

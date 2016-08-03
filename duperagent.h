@@ -22,6 +22,8 @@ class Request : public QObject
 public:
     Request(QQmlEngine *engine, QObject *parent = 0);
 
+    Q_PROPERTY(QJSValue cookie READ cookie WRITE setCookie)
+
     Q_INVOKABLE void config(const QJSValue &);
 
     Q_INVOKABLE QJSValue get(const QJSValue&,
@@ -41,6 +43,9 @@ public:
     Q_INVOKABLE QJSValue put(const QJSValue&,
                               const QJSValue& = QJSValue(),
                               const QJSValue& = QJSValue()) const;
+
+    QJSValue cookie() const;
+    void setCookie(const QJSValue &);
 
 private:
     QQmlEngine *m_engine;

@@ -22,8 +22,11 @@ public:
 private:
     bool m_doneInit;
     bool m_noCache;
+    bool m_noCookieJar;
+    bool m_systemProxy;
     QString m_cachePath;
     qint64 m_maxCacheSize;
+    QString m_cookieJarPath;
 };
 
 } } }

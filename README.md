@@ -9,6 +9,7 @@ of XmlHttpRequest.
 * Modern API in comparison to XmlHttpRequest
 * Support for multipart/form uploads
 * Automatic parsing of response bodies with known content-types
+* Built-in persistent cookie jar
 
 #Limitations
 
@@ -46,14 +47,53 @@ own cache, you can set this property to `false`. The property can be further cus
 ```
     Http.request.config({
         cache: {
-            maxSize: 20000
+            maxSize: 20000,
+            location: "/path/to/cache"
         }
     });
 ```
 
 * `maxSize`: The maximum size of the cache
+* `location`: The full path to the directory for caching files. The default is `<CacheLocation>/duperagent`
 
+### `cookieJar`
 
+This option controls the cookie jar of the agent. The default is to create an instance of a QNetworkCookieJar
+that additionally persists the cookies to disk. If you wish to disable this behavior, for example because you
+have your own cookie jar, you can set this property to `false`. This property can be further customized by
+passing an object.
+
+```
+    Http.request.config({
+        cookieJar: {
+            location: "/path/to/cookies.txt"
+        }
+    });
+```
+
+* `location`: The full path to the file to use for the disk storage. The default is `<AppDataLocation>/duperagent_cookies.txt`
+
+### `proxy`
+
+This option controls the proxy settings used by agent. By default Qt does not use a proxy, however you can use
+the system proxy by setting this value to `"system"`.
+
+```
+    Http.request.config({
+        proxy: "system"
+    });
+```
+
+## cookie
+
+This function behaves similar to `document.cookie` as implemented in browsers.
+
+Calling the property as a getter will return all cookies in the cookie jar as a semi-colon 
+seperated string. Note that this function will not return cookies that are marked as *HttpOnly*.
+
+Calling the property as a setter will add the cookie to the cookie jar. If there is an existing
+cookie with the same identifying tuple in the jar, it will overwrite it. Note that it is not
+possible to overwrite cookies marked as *HttpOnly*. Attempts to overwrite these will be silently ignored.
 
 #Usage
 
