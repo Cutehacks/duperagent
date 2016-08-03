@@ -22,6 +22,12 @@ TestCase {
         async.clear();
     }
 
+    function expiresNextYear() {
+        var d = new Date();
+        d.setUTCFullYear(d.getUTCFullYear() + 1);
+        return d.toUTCString();
+    }
+
     SignalSpy {
         id: async
         target: test
@@ -235,6 +241,35 @@ TestCase {
             .end(function(err, res){
                 compare(res.body.cookies.foo, "bar")
                 compare(res.body.cookies.food, "pizza")
+                done();
+            });
+
+        async.wait(timeout);
+    }
+
+    function test_cookies_persistent() {
+        Http.request.cookie = "persistent=for1year; domain=httpbin.org; expires=" + expiresNextYear();
+
+        Http.request
+            .get("http://httpbin.org/cookies/set")
+            .query({foo: "bar"})
+            .end(function(err, res){
+                verify(res.body.cookies.persistent)
+                verify(Http.request.cookie !== "");
+                done();
+            });
+
+        async.wait(timeout);
+    }
+
+    function test_cookies_delete() {
+        Http.request.cookie = "victim=me; domain=httpbin.org; path=/; expires=" + expiresNextYear();
+
+        Http.request
+            .get("http://httpbin.org/cookies/delete?victim=")
+            .end(function(err, res){
+                verify(!res.body.cookies.victim)
+                verify(!Http.request.cookie || Http.request.cookie.indexOf("victim") < 0);
                 done();
             });
 
