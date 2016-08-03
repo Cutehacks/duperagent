@@ -1,8 +1,9 @@
-#ifndef RESPONSE_H
-#define RESPONSE_H
-// Copyright 2015 Cutehacks AS. All rights reserved.
+// Copyright 2016 Cutehacks AS. All rights reserved.
 // License can be found in the LICENSE file.
 
+#ifndef RESPONSE_H
+
+#define RESPONSE_H
 #include <QtCore/QObject>
 #include <QtQml/QJSValue>
 

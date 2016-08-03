@@ -1,3 +1,6 @@
+// Copyright 2016 Cutehacks AS. All rights reserved.
+// License can be found in the LICENSE file.
+
 #include <QtCore/QDir>
 #include <QtCore/QFile>
 #include <QtCore/QFileInfo>

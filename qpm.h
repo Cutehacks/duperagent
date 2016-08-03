@@ -1,3 +1,6 @@
+// Copyright 2016 Cutehacks AS. All rights reserved.
+// License can be found in the LICENSE file.
+
 #ifdef QPM_USE_NS
 
 #undef _GET_OVERRIDE

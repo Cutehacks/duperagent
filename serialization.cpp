@@ -1,3 +1,6 @@
+// Copyright 2016 Cutehacks AS. All rights reserved.
+// License can be found in the LICENSE file.
+
 #include <QtCore/QJsonDocument>
 #include <QtCore/QJsonArray>
 #include <QtCore/QJsonObject>
