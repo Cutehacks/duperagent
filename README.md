@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/Cutehacks/duperagent.svg?branch=master)](https://travis-ci.org/Cutehacks/duperagent)
+
 DuperAgent is a QML clone of the fantastic [SuperAgent](https://visionmedia.github.io/superagent)
 library from VisionMedia.
 
