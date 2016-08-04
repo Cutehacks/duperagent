@@ -13,7 +13,7 @@ of XmlHttpRequest.
 
 # Limitations
 
-* DuperAgent requires Qt 5.1.
+* DuperAgent requires Qt 5.2.
 * DuperAgent does not implement the XML API of XmlHttpRequest
 
 # Migration from v0.x.x to v1.x.x
