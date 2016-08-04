@@ -60,7 +60,7 @@ RequestPrototype::~RequestPrototype()
 QJSValue RequestPrototype::use(QJSValue fn)
 {
     if (fn.isCallable()) {
-        fn.call(QJSValueList() << self());
+        callAndCheckError(fn, QJSValueList() << self());
     } else {
         qWarning("'use' expects a function");
     }
@@ -427,7 +427,7 @@ void RequestPrototype::handleFinished()
     args << m_error << m_engine->newQObject(rep);
 
     if (m_callback.isCallable()) {
-        m_callback.call(args);
+        callAndCheckError(m_callback, args);
     } else {
         qWarning() << QString("%1 is not callable").arg(m_callback.toString());
     }
@@ -475,6 +475,19 @@ void RequestPrototype::timerEvent(QTimerEvent *)
 {
     m_error = createError(QString("Timeout of %1 ms exceeded").arg(m_timeout));
     abort();
+}
+
+void RequestPrototype::callAndCheckError(QJSValue fn, const QJSValueList &args)
+{
+    QJSValue result = fn.call(args);
+    if (result.isError()) {
+        QString fileName = result.property("fileName").toString();
+        QString lineNumber = result.property("lineNumber").toString();
+        qWarning() << QString("%1: %2 (%3)")
+                      .arg(result.toString())
+                      .arg(fileName)
+                      .arg(lineNumber);
+    }
 }
 
 } } }

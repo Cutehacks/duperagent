@@ -81,6 +81,7 @@ protected slots:
 protected:
     void dispatchRequest();
     void timerEvent(QTimerEvent *event);
+    void callAndCheckError(QJSValue, const QJSValueList &);
     QByteArray serializeData();
     QJSValue createError(const QString&, ErrorType type = Error);
 
