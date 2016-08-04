@@ -1,12 +1,12 @@
 language: cpp
 
 before_install:
-  - sudo add-apt-repository --yes ppa:beineri/opt-qt521
+  - sudo add-apt-repository --yes ppa:beineri/opt-qt542
   - sudo apt-get update -qq
-  - sudo apt-get install -qq qt52base qt52declarative
+  - sudo apt-get install -qq qt54base qt54declarative
 
 script:
-  - source /opt/qt52/bin/qt52-env.sh
+  - source /opt/qt54/bin/qt54-env.sh
   - cd tests
   - qmake
   - make
