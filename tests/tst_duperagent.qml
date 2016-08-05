@@ -275,4 +275,37 @@ TestCase {
 
         async.wait(timeout);
     }
+
+    function test_cache() {
+        Http.request
+            .get("http://httpbin.org/cache/3")
+            .end(function(err, res){
+                verify(!res.fromCache);
+                done();
+            });
+
+        async.wait(timeout);
+        async.clear();
+
+        Http.request
+            .get("http://httpbin.org/cache/3")
+            .end(function(err, res){
+                verify(res.fromCache);
+                done();
+            });
+
+        async.wait(timeout);
+        async.clear();
+
+        sleep(5000);
+
+        Http.request
+            .get("http://httpbin.org/cache/3")
+            .end(function(err, res){
+                verify(!res.fromCache);
+                done();
+            });
+
+        async.wait(timeout);
+    }
 }
