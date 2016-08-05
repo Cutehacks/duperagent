@@ -9,7 +9,7 @@ import com.cutehacks.duperagent 1.0 as Http
 TestCase {
     id: test
     name: "httpbin"
-    property int timeout: 3000
+    property int timeout: 6000
     signal done
 
     function initTestCase() {
