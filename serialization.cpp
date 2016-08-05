@@ -19,7 +19,6 @@ typedef QJSValueIterator JSValueIterator;
 
 namespace com { namespace cutehacks { namespace duperagent {
 
-static const QChar EQUALS('=');
 static const QChar OPEN_SQUARE('[');
 static const QChar CLOSE_SQUARE(']');
 
@@ -194,7 +193,7 @@ QueryItems FormUrlEncodedCodec::stringifyValue(const QString& prefix, const QJSV
     }
 }
 
-QJSValue FormUrlEncodedCodec::parse(const QByteArray &str)
+QJSValue FormUrlEncodedCodec::parse(const QByteArray &)
 {
     QJSValue json = m_engine->newObject();
     return json;
