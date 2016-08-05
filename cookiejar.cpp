@@ -43,10 +43,10 @@ bool CookieJar::deleteCookie(const QNetworkCookie &cookie)
 
 void CookieJar::save() const
 {
-    QDir dir;
     QFile file(m_savePath);
+    QDir dir = QFileInfo(file).dir();
 
-    if (!dir.mkpath(dir.path())) {
+    if (!dir.mkpath(dir.absolutePath())) {
         qWarning("Could not create path for writing: %s", qUtf8Printable(dir.path()));
         return;
     }
