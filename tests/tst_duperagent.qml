@@ -308,4 +308,18 @@ TestCase {
 
         async.wait(timeout);
     }
+
+    function test_multipart() {
+        Http.request
+            .post("http://httpbin.org/post")
+            .field('foo', 'bar')
+            .attach('txt', ':/data.txt')
+            .end(function(err, res){
+                compare(res.body.form.foo, "bar");
+                compare(res.body.files.txt, "WORKED!\n");
+                done();
+            });
+
+        async.wait(10000);
+    }
 }

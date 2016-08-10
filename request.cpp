@@ -209,7 +209,8 @@ QJSValue RequestPrototype::attach(const QJSValue &name, const QJSValue &path,
     dispositionHeader += "\";";
 
     QUrl url(path.toString());
-    QFile *file = new QFile(url.toLocalFile(), m_multipart);
+    QFile *file = new QFile(url.isLocalFile() ? url.toLocalFile() : path.toString(),
+                            m_multipart);
 
     if (!file->exists()) {
         qWarning("File does not exist");
