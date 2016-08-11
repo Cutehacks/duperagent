@@ -113,6 +113,12 @@ void CookieJar::addCookie(const QString &cookieString)
     }
 }
 
+void CookieJar::clearAll()
+{
+    setAllCookies(QList<QNetworkCookie>());
+    save();
+}
+
 QString CookieJar::cookies() const
 {
     QStringList cookieString;

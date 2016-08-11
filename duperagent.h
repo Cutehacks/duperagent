@@ -47,6 +47,8 @@ public:
     QJSValue cookie() const;
     void setCookie(const QJSValue &);
 
+    Q_INVOKABLE void clearCookies();
+
 private:
     QQmlEngine *m_engine;
 };

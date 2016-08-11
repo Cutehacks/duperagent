@@ -16,6 +16,7 @@ TestCase {
         Http.request.config({
             proxy: "system" // for debugging with Charles Proxy
         });
+        Http.request.clearCookies();
     }
 
     function init() {

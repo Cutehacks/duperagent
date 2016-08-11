@@ -159,3 +159,7 @@ separated string. Note that this function will not return cookies that are marke
 Calling the property as a setter will add the cookie to the cookie jar. If there is an existing
 cookie with the same identifying tuple in the jar, it will overwrite it. Note that it is not
 possible to overwrite cookies marked as *HttpOnly*. Attempts to overwrite these will be silently ignored.
+
+## clearCookies
+
+This function will clear all saved cookies including those marked as *HttpOnly*.

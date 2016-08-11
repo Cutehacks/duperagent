@@ -22,6 +22,8 @@ public:
     QString cookies() const;
     void addCookie(const QString &);
 
+    void clearAll();
+
 protected:
     void save() const;
     void load();

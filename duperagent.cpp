@@ -164,6 +164,17 @@ void Request::setCookie(const QJSValue &cookie)
     jar->addCookie(cookie.toString());
 }
 
+void Request::clearCookies()
+{
+    Config::instance()->init(m_engine);
+
+    CookieJar *jar = qobject_cast<CookieJar*>(m_engine->networkAccessManager()->cookieJar());
+    if (!jar)
+        return;
+
+    jar->clearAll();
+}
+
 static QObject *request_provider(QQmlEngine *engine, QJSEngine *)
 {
     return new Request(engine);
