@@ -31,6 +31,17 @@ namespace com { namespace cutehacks { namespace duperagent {
 
 ContentTypeMap contentTypes;
 
+static const QString EVENT_REQUEST =    QStringLiteral("request");
+static const QString EVENT_PROGRESS =   QStringLiteral("progress");
+static const QString EVENT_END =        QStringLiteral("end");
+static const QString EVENT_RESPONSE =   QStringLiteral("response");
+
+static inline uint percent(qint64 loaded, qint64 total) {
+    if (total > 0)
+        return int(loaded / (double)total * 100);
+    return 0;
+}
+
 RequestPrototype::RequestPrototype(QQmlEngine *engine, Method method, const QUrl &url) :
     QObject(0),
     m_method(method),
@@ -288,6 +299,23 @@ QJSValue RequestPrototype::withCredentials()
     return self();
 }
 
+QJSValue RequestPrototype::on(const QJSValue &event, const QJSValue &handler)
+{
+    if (!event.isString()) {
+        qWarning("'on' expects a string as first argument");
+        return self();
+    }
+    if (!handler.isCallable()) {
+        qWarning("'on' expects a function as second argument");
+        return self();
+    }
+
+    QString name = event.toString().toLower();
+    m_listeners[name].append(handler);
+
+    return self();
+}
+
 QJSValue RequestPrototype::end(QJSValue callback)
 {
     m_callback = callback;
@@ -353,8 +381,13 @@ void RequestPrototype::dispatchRequest()
     }
 
     emit started();
+    emitEvent(EVENT_REQUEST, self());
 
     connect(m_reply, SIGNAL(finished()), this, SLOT(handleFinished()));
+    connect(m_reply, SIGNAL(downloadProgress(qint64,qint64)),
+            this, SLOT(handleDownloadProgress(qint64, qint64)));
+    connect(m_reply, SIGNAL(uploadProgress(qint64,qint64)),
+            this, SLOT(handleUploadProgress(qint64, qint64)));
 #ifndef QT_NO_SSL
     connect(m_reply, SIGNAL(sslErrors(QList<QSslError>)),
             this, SLOT(handleSslErrors(QList<QSslError>)));
@@ -422,10 +455,15 @@ void RequestPrototype::handleFinished()
         }
     }
 
+    emitEvent(EVENT_END, QJSValue::UndefinedValue);
+
     QJSValueList args;
 
     ResponsePrototype *rep = new ResponsePrototype(m_engine, m_reply);
+    QJSValue res = m_engine->newQObject(rep);
     args << m_error << m_engine->newQObject(rep);
+
+    emitEvent(EVENT_RESPONSE, res);
 
     if (m_callback.isCallable()) {
         callAndCheckError(m_callback, args);
@@ -463,6 +501,39 @@ QJSValue RequestPrototype::createError(const QString &message, ErrorType type)
 
     QString script = "new %1('%2');";
     return m_engine->evaluate(script.arg(err).arg(message));
+}
+
+QJSValue RequestPrototype::createProgressEvent(bool upload, qint64 loaded, qint64 total)
+{
+    QJSValue event = m_engine->newObject();
+    event.setProperty("direction", upload ? "upload" : "download");
+    event.setProperty("loaded",  (uint)loaded);
+    event.setProperty("total",  (uint)total);
+    event.setProperty("percent",  percent(loaded, total));
+    return event;
+}
+
+
+void RequestPrototype::handleUploadProgress(qint64 sent, qint64 total)
+{
+    emitEvent(EVENT_PROGRESS, createProgressEvent(true, sent, total));
+    emit progress(sent, total);
+}
+
+void RequestPrototype::handleDownloadProgress(qint64 received, qint64 total)
+{
+    emitEvent(EVENT_PROGRESS, createProgressEvent(false, received, total));
+    emit progress(received, total);
+}
+
+void RequestPrototype::emitEvent(const QString &name, const QJSValue &event)
+{
+    QJSValueList args;
+    args.append(event);
+
+    QJSValueList listeners = m_listeners[name];
+    for (QJSValueList::iterator it = listeners.begin(); it != listeners.end(); it++)
+        callAndCheckError(*it, args);
 }
 
 #ifndef QT_NO_SSL

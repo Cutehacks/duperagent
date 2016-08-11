@@ -62,6 +62,7 @@ public:
                                 const QJSValue& = QJSValue());
     Q_INVOKABLE QJSValue send(const QJSValue&);
     Q_INVOKABLE QJSValue withCredentials();
+    Q_INVOKABLE QJSValue on(const QJSValue&, const QJSValue&);
     Q_INVOKABLE QJSValue end(QJSValue callback);
 
     inline QJSValue self() const { return m_self; }
@@ -74,6 +75,8 @@ signals:
 
 protected slots:
     void handleFinished();
+    void handleUploadProgress(qint64, qint64);
+    void handleDownloadProgress(qint64, qint64);
 #ifndef QT_NO_SSL
     void handleSslErrors(const QList<QSslError> &);
 #endif
@@ -84,6 +87,8 @@ protected:
     void callAndCheckError(QJSValue, const QJSValueList &);
     QByteArray serializeData();
     QJSValue createError(const QString&, ErrorType type = Error);
+    QJSValue createProgressEvent(bool, qint64, qint64);
+    void emitEvent(const QString&, const QJSValue&);
 
 private:
     Method m_method;
@@ -102,6 +107,7 @@ private:
     QJSValue m_data;
     QByteArray m_rawData;
     QJSValue m_error;
+    QHash<QString, QJSValueList> m_listeners;
 };
 
 } } }

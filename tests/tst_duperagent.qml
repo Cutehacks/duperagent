@@ -322,4 +322,37 @@ TestCase {
 
         async.wait(10000);
     }
+
+    function test_events() {
+        var events = {
+            request: false,
+            progress: false,
+            end: false,
+            response: false
+        };
+
+        Http.request
+            .get("http://httpbin.org/bytes/" + 2 * 1024 * 1024)
+            .on('request', function(req) {
+                events.request = req;
+            })
+            .on('progress', function(progress) {
+                events.progress = progress;
+            })
+            .on('end', function() {
+                events.end = true;
+            })
+            .on('progress', function(res) {
+                events.response = res;
+            })
+            .end(function(err, res){
+                verify(events.request);
+                verify(events.progress);
+                verify(events.end);
+                verify(events.response);
+                done();
+            });
+
+        async.wait(60000);
+    }
 }
