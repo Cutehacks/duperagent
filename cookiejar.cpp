@@ -73,7 +73,6 @@ void CookieJar::load()
     QFile file(m_savePath);
 
     if (!file.open(QIODevice::ReadOnly)) {
-        qWarning("Could not open file for reading: %s", qUtf8Printable(m_savePath));
         return;
     }
 
