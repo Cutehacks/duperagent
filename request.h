@@ -23,6 +23,11 @@ typedef QHash<QString, QByteArray> ContentTypeMap;
 class RequestPrototype : public QObject {
     Q_OBJECT
 
+    Q_PROPERTY(QString method READ method WRITE setMethod)
+    Q_PROPERTY(QString url READ url WRITE setUrl)
+    Q_PROPERTY(QJSValue data READ data WRITE setData)
+    Q_PROPERTY(QJSValue headers READ headers WRITE setHeaders)
+
 public:
     enum Method {
         Head    = QNetworkAccessManager::HeadOperation,
@@ -67,6 +72,18 @@ public:
 
     inline QJSValue self() const { return m_self; }
 
+    QString method() const;
+    void setMethod(const QString&);
+
+    QString url() const;
+    void setUrl(const QString&);
+
+    QJSValue &data();
+    void setData(const QJSValue&);
+
+    QJSValue &headers();
+    void setHeaders(const QJSValue&);
+
 signals:
     void started();
     void progress(int loaded, int total);
@@ -105,6 +122,7 @@ private:
     QUrlQuery m_query;
     QJSValue m_callback;
     QJSValue m_data;
+    QJSValue m_headers;
     QByteArray m_rawData;
     QJSValue m_error;
     QHash<QString, QJSValueList> m_listeners;

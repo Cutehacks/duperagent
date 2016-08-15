@@ -36,6 +36,13 @@ static const QString EVENT_PROGRESS =   QStringLiteral("progress");
 static const QString EVENT_END =        QStringLiteral("end");
 static const QString EVENT_RESPONSE =   QStringLiteral("response");
 
+static const QString METHOD_HEAD =      QStringLiteral("HEAD");
+static const QString METHOD_POST =      QStringLiteral("POST");
+static const QString METHOD_GET =       QStringLiteral("GET");
+static const QString METHOD_PUT =       QStringLiteral("PUT");
+static const QString METHOD_PATCH =     QStringLiteral("PATCH");
+static const QString METHOD_DELETE =    QStringLiteral("DELETE");
+
 static inline uint percent(qint64 loaded, qint64 total) {
     if (total > 0)
         return int(loaded / (double)total * 100);
@@ -60,6 +67,8 @@ RequestPrototype::RequestPrototype(QQmlEngine *engine, Method method, const QUrl
     m_query = QUrlQuery(url);
     m_engine->setObjectOwnership(this, QQmlEngine::JavaScriptOwnership);
     m_self = m_engine->newQObject(this);
+    m_headers = m_engine->newObject();
+    m_data = m_engine->newObject();
 }
 
 RequestPrototype::~RequestPrototype()
@@ -102,14 +111,14 @@ QJSValue RequestPrototype::set(const QJSValue &field, const QJSValue &val)
     if (field.isObject()) {
         JSValueIterator it(field);
         while (it.next()) {
-            m_request->setRawHeader(
-                        it.name().toUtf8(),
-                        it.value().toString().toUtf8());
+            m_headers.setProperty(
+                        it.name(),
+                        it.value().toString());
         }
     } else {
-        m_request->setRawHeader(
-                    field.toString().toUtf8(),
-                    val.toString().toUtf8());
+        m_headers.setProperty(
+                    field.toString(),
+                    val.toString());
     }
 
     return self();
@@ -117,10 +126,7 @@ QJSValue RequestPrototype::set(const QJSValue &field, const QJSValue &val)
 
 QJSValue RequestPrototype::unset(const QString &field)
 {
-    m_request->setRawHeader(
-                field.toUtf8(),
-                QByteArray());
-
+    m_headers.deleteProperty(field.toUtf8());
     return self();
 }
 
@@ -325,6 +331,80 @@ QJSValue RequestPrototype::end(QJSValue callback)
     return self();
 }
 
+QString RequestPrototype::method() const
+{
+    switch (m_method) {
+    case Head:
+        return METHOD_HEAD;
+    case Post:
+        return METHOD_POST;
+    case Get:
+        return METHOD_GET;
+    case Put:
+        return METHOD_PUT;
+    case Patch:
+        return METHOD_PATCH;
+    case Delete:
+        return METHOD_DELETE;
+    }
+    return QString();
+}
+
+void RequestPrototype::setMethod(const QString &method)
+{
+    QString upper = method.toUpper().trimmed();
+    if (upper == METHOD_GET) {
+        m_method = Get;
+    } else if (upper == METHOD_POST) {
+        m_method = Post;
+    } else if (upper == METHOD_PUT) {
+        m_method = Put;
+    } else if (upper == METHOD_PATCH) {
+        m_method = Patch;
+    } else if (upper == METHOD_DELETE) {
+        m_method = Delete;
+    } else if (upper == METHOD_HEAD) {
+        m_method = Head;
+    } else {
+        qWarning("Invalid method: %s", qUtf8Printable(method));
+    }
+}
+
+QString RequestPrototype::url() const
+{
+    return m_request->url().toString();
+}
+
+void RequestPrototype::setUrl(const QString &u)
+{
+    QUrl url(u, QUrl::TolerantMode);
+    if (url.isValid()) {
+        m_request->setUrl(url);
+    } else {
+        qWarning("Invalid url: %s", qUtf8Printable(url.errorString()));
+    }
+}
+
+QJSValue &RequestPrototype::data()
+{
+    return m_data;
+}
+
+void RequestPrototype::setData(const QJSValue &data)
+{
+   m_data = data;
+}
+
+QJSValue &RequestPrototype::headers()
+{
+    return m_headers;
+}
+
+void RequestPrototype::setHeaders(const QJSValue &headers)
+{
+    m_headers = headers;
+}
+
 QByteArray RequestPrototype::serializeData()
 {
     QByteArray type = m_request->header(
@@ -345,6 +425,14 @@ void RequestPrototype::dispatchRequest()
     QUrl url = m_request->url();
     url.setQuery(m_query);
     m_request->setUrl(url);
+
+    JSValueIterator it(m_headers);
+    while (it.next()) {
+        m_request->setRawHeader(
+                    it.name().toUtf8(),
+                    it.value().toString().toUtf8());
+    }
+
 
     switch (m_method) {
     case Get:

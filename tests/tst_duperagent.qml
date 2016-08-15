@@ -356,4 +356,28 @@ TestCase {
 
         async.wait(60000);
     }
+
+    function test_use() {
+        var setHeader = function(req) {
+            req.headers["X-Custom-Header"] =  "1"
+            return req
+        }
+
+        var setUrl = function(req) {
+            req.url = "http://httpbin.org" + req.url
+            return req
+        }
+
+        Http.request
+            .get("/get")
+            .use(setHeader)
+            .use(setUrl)
+            .end(function(err, res) {
+                console.log(JSON.stringify(res, 0, 4));
+                compare(res.body.headers["X-Custom-Header"], "1")
+                done();
+            })
+
+        async.wait(timeout);
+    }
 }
