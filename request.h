@@ -19,6 +19,7 @@ class QQmlEngine;
 namespace com { namespace cutehacks { namespace duperagent {
 
 typedef QHash<QString, QByteArray> ContentTypeMap;
+class Promise;
 
 class RequestPrototype : public QObject {
     Q_OBJECT
@@ -69,6 +70,9 @@ public:
     Q_INVOKABLE QJSValue withCredentials();
     Q_INVOKABLE QJSValue on(const QJSValue&, const QJSValue&);
     Q_INVOKABLE QJSValue end(QJSValue callback);
+    Q_INVOKABLE QJSValue then(QJSValue = QJSValue(), QJSValue = QJSValue());
+    Q_INVOKABLE void endCallback(QJSValue, QJSValue);
+    Q_INVOKABLE void executor(QJSValue, QJSValue);
 
     inline QJSValue self() const { return m_self; }
 
@@ -126,6 +130,8 @@ private:
     QByteArray m_rawData;
     QJSValue m_error;
     QHash<QString, QJSValueList> m_listeners;
+    Promise *m_promise;
+    QPair<QJSValue, QJSValue> m_executor;
 };
 
 } } }

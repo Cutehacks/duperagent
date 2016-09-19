@@ -373,11 +373,93 @@ TestCase {
             .use(setHeader)
             .use(setUrl)
             .end(function(err, res) {
-                console.log(JSON.stringify(res, 0, 4));
                 compare(res.body.headers["X-Custom-Header"], "1")
                 done();
             })
 
         async.wait(timeout);
     }
+
+    function test_then_pending() {
+        Http.request
+            .get("http://httpbin.org/get")
+            .then(function(resp) {
+                done();
+                return resp;
+            });
+        async.wait(timeout);
+    }
+
+    function test_then_rejected() {
+        Http.request
+            .get("http://httpbin.org/status/404")
+            .then(function(value) {
+                verify(false, "this should not be fulfilled!")
+            }, function(reason) {
+                compare(reason.status, 404);
+                done();
+            });
+        async.wait(timeout);
+    }
+
+    function test_then_fulfilled() {
+        var promise = Http.request
+            .get("http://httpbin.org/get")
+            .then(function(resp){return resp;});
+
+        sleep(timeout);
+
+        promise.then(function(value) {
+           compare(value.status, 200);
+           done();
+        });
+
+        async.wait(timeout);
+    }
+
+    function test_then_multiple() {
+        var req = Http.request
+            .get("http://httpbin.org/get")
+
+        var count = 0;
+        req.then(function() {
+            count++;
+        });
+        req.then(function() {
+            count++;
+        });
+        req.then(function() {
+            count++;
+            done();
+        });
+
+        async.wait(timeout);
+
+        compare(count, 3);
+    }
+
+    function test_then_chaining_1() {
+        var p1 = Http.request
+            .get("http://httpbin.org/get?req=1")
+            .then(function(value) {
+                var req = parseInt(value.body.args.req)+1;
+                return Http.request
+                    .get("http://httpbin.org/get?req=" + req)
+                    .then(function(res) {
+                        return res;
+                    });
+            });
+
+        var p2 = p1.then(function(value2) {
+                compare(value2.body.args.req, "2");
+                done();
+                return 1337;
+            }, function(reason) {
+                verify(false, reason);
+                done();
+            });
+
+        async.wait(timeout);
+    }
+
 }

@@ -1,8 +1,6 @@
 // Copyright 2016 Cutehacks AS. All rights reserved.
 // License can be found in the LICENSE file.
 
-
-#include <QtDebug>
 #include <QtCore/QFile>
 #include <QtCore/QFileInfo>
 #include <QtCore/QBuffer>
@@ -19,6 +17,7 @@
 #include "response.h"
 #include "config.h"
 #include "serialization.h"
+#include "promise.h"
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 6, 0)
 #include "jsvalueiterator.h"
@@ -60,7 +59,8 @@ RequestPrototype::RequestPrototype(QQmlEngine *engine, Method method, const QUrl
     m_timeout(-1),
     m_timer(0),
     m_redirects(5),
-    m_redirectCount(0)
+    m_redirectCount(0),
+    m_promise(0)
 {
     Config::instance()->init(m_engine);
     m_request = new QNetworkRequest(QUrl(url.toString()));
@@ -329,6 +329,31 @@ QJSValue RequestPrototype::end(QJSValue callback)
     dispatchRequest();
 
     return self();
+}
+
+void RequestPrototype::endCallback(QJSValue err, QJSValue res)
+{
+    if (err.isError()) {
+        m_executor.second.call(QJSValueList() << err);
+    } else {
+        m_executor.first.call(QJSValueList() << res);
+    }
+}
+
+void RequestPrototype::executor(QJSValue resolve, QJSValue reject)
+{
+    m_executor.first = resolve;
+    m_executor.second = reject;
+    end(self().property("endCallback"));
+}
+
+QJSValue RequestPrototype::then(QJSValue onFulfilled, QJSValue onRejected)
+{
+    if (!m_promise) {
+        m_promise = new Promise(m_engine, self().property("executor"));
+    }
+
+    return m_promise->then(onFulfilled, onRejected);
 }
 
 QString RequestPrototype::method() const
