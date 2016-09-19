@@ -130,7 +130,7 @@ private:
     QByteArray m_rawData;
     QJSValue m_error;
     QHash<QString, QJSValueList> m_listeners;
-    Promise *m_promise;
+    QScopedPointer<Promise> m_promise;
     QPair<QJSValue, QJSValue> m_executor;
 };
 

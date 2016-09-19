@@ -350,7 +350,8 @@ void RequestPrototype::executor(QJSValue resolve, QJSValue reject)
 QJSValue RequestPrototype::then(QJSValue onFulfilled, QJSValue onRejected)
 {
     if (!m_promise) {
-        m_promise = new Promise(m_engine, self().property("executor"));
+        m_promise.reset(new Promise(m_engine, self().property("executor")));
+        m_engine->setObjectOwnership(m_promise.data(), QQmlEngine::CppOwnership);
     }
 
     return m_promise->then(onFulfilled, onRejected);
