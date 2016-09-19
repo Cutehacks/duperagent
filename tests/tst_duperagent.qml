@@ -462,6 +462,32 @@ TestCase {
         async.wait(timeout);
     }
 
+    function test_then_chaining_2() {
+        var p1 = Http.request
+            .get("http://httpbin.org/get?req=1")
+            .then();
+
+        var p2 = p1.then(function(value) {
+                compare(value.body.args.req, "1");
+                done();
+            });
+
+        async.wait(timeout);
+    }
+
+    function test_then_chaining_3() {
+        var p1 = Http.request
+        .get("http://httpbin.org/get")
+        .then("42");
+
+        var p2 = p1.then(function(value) {
+            compare(value, "42");
+            done();
+        });
+
+        async.wait(timeout);
+    }
+
     function test_ssl() {
         var fingerprint = "";
         Http.request

@@ -89,9 +89,9 @@ void Promise::call(QJSValue fn, const QJSValue& arg, Promise *promise)
 
     if (!fn.isCallable()) {
         if (m_state == FULFILLED)
-            promise->fulfill(fn);
+            promise->fulfill(!fn.isUndefined() ? fn : arg);
         else
-            promise->reject(fn);
+            promise->reject(!fn.isUndefined() ? fn : arg);
     } else {
         QJSValue result = fn.call(QJSValueList() << arg);
         if (result.isError()) {
