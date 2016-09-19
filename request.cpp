@@ -8,10 +8,12 @@
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkRequest>
 #include <QtNetwork/QHttpMultiPart>
+#include <QtQml/QQmlEngine>
+
 #ifndef QT_NO_SSL
 #include <QtNetwork/QSslError>
+#include "ssl.h"
 #endif
-#include <QtQml/QQmlEngine>
 
 #include "request.h"
 #include "response.h"
@@ -34,6 +36,7 @@ static const QString EVENT_REQUEST =    QStringLiteral("request");
 static const QString EVENT_PROGRESS =   QStringLiteral("progress");
 static const QString EVENT_END =        QStringLiteral("end");
 static const QString EVENT_RESPONSE =   QStringLiteral("response");
+static const QString EVENT_SECURE =     QStringLiteral("secureconnect");
 
 static const QString METHOD_HEAD =      QStringLiteral("HEAD");
 static const QString METHOD_POST =      QStringLiteral("POST");
@@ -505,6 +508,8 @@ void RequestPrototype::dispatchRequest()
 #ifndef QT_NO_SSL
     connect(m_reply, SIGNAL(sslErrors(QList<QSslError>)),
             this, SLOT(handleSslErrors(QList<QSslError>)));
+    connect(m_reply, SIGNAL(encrypted()),
+            this, SLOT(handleEncrypted()));
 #endif
 
     if (m_timeout > 0)
@@ -651,6 +656,16 @@ void RequestPrototype::emitEvent(const QString &name, const QJSValue &event)
 }
 
 #ifndef QT_NO_SSL
+void RequestPrototype::handleEncrypted()
+{
+    // return if no one is listening
+    if (m_listeners[EVENT_SECURE].length() == 0)
+        return;
+
+    SecureConnectEvent *event = new SecureConnectEvent(m_engine, m_reply->sslConfiguration());
+    emitEvent(EVENT_SECURE, event->self());
+}
+
 void RequestPrototype::handleSslErrors(const QList<QSslError> &)
 {
 

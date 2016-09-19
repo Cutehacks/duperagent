@@ -462,4 +462,22 @@ TestCase {
         async.wait(timeout);
     }
 
+    function test_ssl() {
+        var fingerprint = "";
+        Http.request
+            .get("https://httpbin.org/get")
+            .on("secureConnect", function(event) {
+                var cert = event.getPeerCertificate();
+                fingerprint = cert.fingerprint;
+            })
+            .end(function() {
+                done();
+            })
+
+        async.wait(timeout);
+
+        // This fingerprint might need to be changed when the cert is renewed
+        compare(fingerprint, "9d:01:5c:8e:fd:4d:df:71:a4:99:ce:29:93:40:3f:5f:ee:74:d0:95");
+    }
+
 }

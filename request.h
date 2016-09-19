@@ -99,6 +99,7 @@ protected slots:
     void handleUploadProgress(qint64, qint64);
     void handleDownloadProgress(qint64, qint64);
 #ifndef QT_NO_SSL
+    void handleEncrypted();
     void handleSslErrors(const QList<QSslError> &);
 #endif
 
