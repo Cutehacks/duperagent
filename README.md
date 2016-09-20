@@ -12,6 +12,8 @@ of XmlHttpRequest.
 * Support for multipart/form uploads
 * Automatic parsing of response bodies with known content-types
 * Built-in persistent cookie jar
+* Promise API
+* Secure connection (SSL/TLS) API
 
 # Limitations
 
@@ -80,8 +82,7 @@ You can of course use whatever you want instead of `Http`, but this documentatio
 At this point in time, the API should be almost identical to that of SuperAgent so that documentation
 is recommended. The following functions are not yet implemented in DuperAgent:
 
-- `withCredentials`: CORS - Not implemented yet
-- `then`: ES6 style promises are not yet implemented
+- `withCredentials`: CORS - Not implemented
 - `buffer`: Response body buffering is not yet implemented
 - `pipe`: Piping to streams is not supported
 
