@@ -75,10 +75,11 @@ QJSValue JsonCodec::parseJsonValue(const QJsonValue &val)
         return QJSValue(val.toDouble());
     case QJsonValue::String:
         return QJSValue(val.toString());
-    case QJsonValue::Undefined:
-        return QJSValue(QJSValue::UndefinedValue);
     case QJsonValue::Null:
         return QJSValue(QJSValue::NullValue);
+    case QJsonValue::Undefined:
+    default:
+        return QJSValue(QJSValue::UndefinedValue);
     }
 }
 
