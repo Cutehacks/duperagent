@@ -587,7 +587,7 @@ void RequestPrototype::handleFinished()
     if (m_callback.isCallable()) {
         callAndCheckError(m_callback, args);
     } else {
-        qWarning() << QString("%1 is not callable").arg(m_callback.toString());
+        qWarning("%s is not callable", qUtf8Printable(m_callback.toString()));
     }
 }
 
@@ -684,10 +684,10 @@ void RequestPrototype::callAndCheckError(QJSValue fn, const QJSValueList &args)
     if (result.isError()) {
         QString fileName = result.property("fileName").toString();
         QString lineNumber = result.property("lineNumber").toString();
-        qWarning() << QString("%1: %2 (%3)")
-                      .arg(result.toString())
-                      .arg(fileName)
-                      .arg(lineNumber);
+        qWarning("%s: %s (%s)",
+            qUtf8Printable(result.toString()),
+            qUtf8Printable(fileName),
+            qUtf8Printable(lineNumber));
     }
 }
 
