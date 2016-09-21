@@ -17,7 +17,7 @@ SOURCES += $$PWD/duperagent.cpp \
     $$PWD/cookiejar.cpp \
     $$PWD/promise.cpp
 
-contains(QT_CONFIG, ssl) {
+contains(QT_CONFIG, ssl) | contains(QT_CONFIG, openssl) | contains(QT_CONFIG, openssl-linked) {
     HEADERS += $$PWD/ssl.h
     SOURCES += $$PWD/ssl.cpp
 }
