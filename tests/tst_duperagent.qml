@@ -488,6 +488,21 @@ TestCase {
         async.wait(timeout);
     }
 
+    function test_catch() {
+        var errStr = "Gotta catch em all!";
+        Http.request
+            .get("http://httpbin.org/get")
+            .then(function(value) {
+                throw new Error(errStr);
+            })
+            .catch(function(err) {
+                compare(err.message, errStr);
+                done();
+            });
+
+        async.wait(timeout);
+    }
+
     function test_ssl() {
         var fingerprint = "";
         Http.request

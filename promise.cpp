@@ -15,6 +15,8 @@ Promise::Promise(QQmlEngine *engine, QJSValue executor) :
     m_self = m_engine->newQObject(this);
     m_engine->setObjectOwnership(this, QQmlEngine::JavaScriptOwnership);
 
+    m_self.setProperty("catch", m_self.property("katch"));
+
     if (executor.isCallable()) {
         executor.call(QJSValueList()
                       << m_self.property("fulfill")
@@ -42,6 +44,11 @@ QJSValue Promise::then(QJSValue onFulfilled, QJSValue onRejected)
     return next->self();
 }
 
+
+QJSValue Promise::katch(QJSValue onRejected)
+{
+    return then(QJSValue::UndefinedValue, onRejected);
+}
 
 void Promise::fulfill(const QJSValue &value)
 {
