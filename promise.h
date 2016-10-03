@@ -38,7 +38,6 @@ public:
     inline QJSValue self() {            return m_self;}
 
     Q_INVOKABLE QJSValue then(QJSValue = QJSValue(), QJSValue = QJSValue());
-    Q_INVOKABLE void endCallback(const QJSValue&, const QJSValue&);
     Q_INVOKABLE void fulfill(const QJSValue&);
     Q_INVOKABLE void reject(const QJSValue&);
 

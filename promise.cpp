@@ -42,14 +42,6 @@ QJSValue Promise::then(QJSValue onFulfilled, QJSValue onRejected)
     return next->self();
 }
 
-void Promise::endCallback(const QJSValue &err, const QJSValue &res)
-{
-    if (err.isError()) {
-        reject(err);
-    } else {
-        fulfill(res);
-    }
-}
 
 void Promise::fulfill(const QJSValue &value)
 {

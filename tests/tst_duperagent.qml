@@ -505,5 +505,4 @@ TestCase {
         // This fingerprint might need to be changed when the cert is renewed
         compare(fingerprint, "9d:01:5c:8e:fd:4d:df:71:a4:99:ce:29:93:40:3f:5f:ee:74:d0:95");
     }
-
 }
