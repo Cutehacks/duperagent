@@ -77,7 +77,7 @@ import com.cutehacks.duperagent 1.0 as Http
 
 You can of course use whatever you want instead of `Http`, but this documentation uses this alias throughout.
 
-# API
+# Request API
 
 At this point in time, the API should be almost identical to that of SuperAgent so that documentation
 is recommended. The following functions are not yet implemented in DuperAgent:
@@ -164,3 +164,116 @@ possible to overwrite cookies marked as *HttpOnly*. Attempts to overwrite these 
 ## clearCookies
 
 This function will clear all saved cookies including those marked as *HttpOnly*.
+
+# Promise API
+
+This package contains an implementation of the [Promises/A+](https://promisesaplus.com/) specification and also 
+offers an API similar to the Promises API in ES2017. For more information, please see 
+[MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)
+
+At some point this API may be split out into it's own module.
+
+## create
+
+Creates a new Promise object.
+
+Since the Javascript engine in QML does not allow us to expose new types with constructors, the
+`new Promise(executor)` syntax is not supported. Instead the create function can be used like so:
+
+```js
+var p = Http.promise.create(function(resolve, reject) {
+
+    asynchronousStuff(function(success) {
+        if (success) {
+            resolve("worked!);
+        } else {
+            reject("something failed");
+        }
+    });
+
+});
+
+p1.then(function(value) {
+    // success
+}).catch(function(reason) {
+    // failure
+});
+```
+
+## resolve
+
+Returns a resolved promise.
+
+```js
+var p = Http.promise.resolve(5);
+
+p.then(function(value) {
+    console.log(value); // 5
+});
+```
+
+## reject
+
+Returns a rejected promise.
+
+```js
+var p = Http.promise.reject("error");
+
+p.catch(function(reason) {
+    console.log(reason); // "error"
+});
+```
+
+## all
+
+Concurrently executes several promises and returns another promise that is fulfilled 
+when the original promises are fulfilled. The resolved value is an array containing
+the values of the original promises in the original order (not the order they were
+fulfilled).
+
+If one of the original promises fail, the returned promise will be rejected with the 
+same reason.
+
+```js
+var p1 = Http.promise.resolve(3);
+var p2 = 1337;
+var p3 = Http.request
+        .get("http://httpbin.org/get")
+        .then(function(resp) {
+            return resp.body;
+        });
+
+var p4 = Http.promise.all([p1, p2, p3]);
+
+p4.then(function(values) {
+    console.log(values[0]); // 3
+    console.log(values[1]); // 1337
+    console.log(values[2]); // resp.body
+});
+```
+
+## race
+
+Concurrently executes several promises and returns another promise that is fulfilled 
+when the first of those promises is fulfilled.
+
+```js
+var p1 = Http.request
+     .get("http://httpbin.org/delay/3")
+     .then(function(resp) {
+         return 3;
+     });
+
+var p2 = Http.request
+    .get("http://httpbin.org/delay/1")
+    .then(function(resp) {
+        return 1;
+    });
+
+var p3 = Http.promise.race([p1, p2]);
+
+p3.then(function(value) {
+    console.log(value); // 1
+});
+```
+

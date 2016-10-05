@@ -150,8 +150,8 @@ void Promise::merge(Promise *other)
     } else {
         // 2.3.2.1 If x is pending, promise must remain pending until x is
         // fulfilled or rejected.
-        connect(other, SIGNAL(settled(State, QJSValue)),
-                this, SLOT(settle(State, QJSValue)));
+        connect(other, SIGNAL(settled(Promise::State, QJSValue)),
+                this, SLOT(settle(Promise::State, QJSValue)));
     }
 }
 

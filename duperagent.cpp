@@ -8,6 +8,7 @@
 #include "request.h"
 #include "config.h"
 #include "cookiejar.h"
+#include "promisemodule.h"
 
 namespace com { namespace cutehacks { namespace duperagent {
 
@@ -180,6 +181,11 @@ static QObject *request_provider(QQmlEngine *engine, QJSEngine *)
     return new Request(engine);
 }
 
+static QObject *promise_provider(QQmlEngine *engine, QJSEngine *)
+{
+    return new PromiseModule(engine);
+}
+
 static void registerTypes()
 {
     qmlRegisterSingletonType<Request>(
@@ -187,6 +193,12 @@ static void registerTypes()
         1, 0,
         "request",
         request_provider);
+
+    qmlRegisterSingletonType<PromiseModule>(
+        "com.cutehacks.duperagent",
+        1, 0,
+        "promise",
+        promise_provider);
 }
 
 Q_COREAPP_STARTUP_FUNCTION(registerTypes)

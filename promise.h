@@ -22,20 +22,21 @@ class Promise : public QObject
 {
     Q_OBJECT
 
-    enum State{
-        PENDING,
-        FULFILLED,
-        REJECTED
-    };
-
     Q_PROPERTY(bool isPending READ isPending)
     Q_PROPERTY(bool isFulfilled READ isFulfilled)
     Q_PROPERTY(bool isRejected READ isRejected)
     Q_PROPERTY(int length READ length)
 
 public:
+    enum State{
+        PENDING,
+        FULFILLED,
+        REJECTED
+    };
+    Q_ENUM(State)
+
     explicit Promise(QQmlEngine *, QJSValue = QJSValue());
-    inline QJSValue self() {            return m_self;}
+    inline QJSValue self() { return m_self;}
 
     Q_INVOKABLE QJSValue then(QJSValue = QJSValue(), QJSValue = QJSValue());
     Q_INVOKABLE QJSValue katch(QJSValue = QJSValue()); // can't use 'catch' :)
@@ -47,15 +48,18 @@ public:
     inline bool isRejected() const {    return m_state == REJECTED;}
     inline int length() const {         return 1; }
 
+    inline QJSValue value() const {     return m_value; }
+    inline State state() const {     return m_state; }
+
 protected:
     void call(QJSValue, const QJSValue&, Promise *);
     void merge(Promise *);
 
 signals:
-    void settled(State, QJSValue);
+    void settled(Promise::State, QJSValue);
 
 private slots:
-    void settle(State, QJSValue);
+    void settle(Promise::State, QJSValue);
 
 private:
     QQmlEngine *m_engine;
