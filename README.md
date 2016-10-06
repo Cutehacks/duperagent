@@ -185,7 +185,7 @@ var p = Http.promise.create(function(resolve, reject) {
 
     asynchronousStuff(function(success) {
         if (success) {
-            resolve("worked!);
+            resolve("worked!");
         } else {
             reject("something failed");
         }
