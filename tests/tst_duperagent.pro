@@ -5,3 +5,5 @@ SOURCES += tst_duperagent.cpp
 OTHER_FILES += *.qml
 
 include($$PWD/../com_cutehacks_duperagent.pri)
+
+RESOURCES += $$PWD/data.qrc
