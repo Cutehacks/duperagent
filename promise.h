@@ -33,7 +33,7 @@ public:
         FULFILLED,
         REJECTED
     };
-    Q_ENUM(State)
+    Q_ENUMS(State)
 
     explicit Promise(QQmlEngine *, QJSValue = QJSValue());
     inline QJSValue self() { return m_self;}
