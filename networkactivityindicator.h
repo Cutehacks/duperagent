@@ -6,6 +6,8 @@
 
 #include <QObject>
 
+class QMutex;
+
 namespace com { namespace cutehacks { namespace duperagent {
 
 class NetworkActivityIndicator : public QObject
