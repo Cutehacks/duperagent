@@ -16,8 +16,11 @@ namespace com { namespace cutehacks { namespace duperagent {
 static const char *PROP_CACHE           = "cache";
 static const char *PROP_CACHE_MAX_SIZE  = "maxSize";
 static const char *PROP_CACHE_LOC       = "location";
+
 static const char *PROP_COOKIE_JAR      = "cookieJar";
 static const char *PROP_COOKIE_JAR_LOC  = "location";
+static const char *PROP_COOKIE_PERSIST  = "persistSessions";
+
 static const char *PROP_PROXY           = "proxy";
 
 Q_GLOBAL_STATIC(Config, globalConfig)
@@ -63,7 +66,10 @@ void Config::init(QQmlEngine *engine)
             m_cookieJarPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)
                 + "/duperagent_cookies.txt";
         }
-        network->setCookieJar(new CookieJar(m_cookieJarPath, network));
+        CookieJar *cj = new CookieJar(m_cookieJarPath, network);
+        if (m_persistSessionCookies)
+            cj->setPersistSessions(m_persistSessionCookies);
+        network->setCookieJar(cj);
     }
 }
 
@@ -94,6 +100,10 @@ void Config::setOptions(const QJSValue &options)
         if (jarOptions.hasProperty(QString::fromLatin1(PROP_COOKIE_JAR_LOC))) {
             m_cookieJarPath = jarOptions.property(
                         QString::fromLatin1(PROP_COOKIE_JAR_LOC)).toString();
+        }
+        if (jarOptions.hasProperty(QString::fromLatin1(PROP_COOKIE_PERSIST))) {
+            m_persistSessionCookies = jarOptions.property(
+                        QString::fromLatin1(PROP_COOKIE_PERSIST)).toBool();
         }
     }
 

@@ -13,7 +13,8 @@ namespace com { namespace cutehacks { namespace duperagent {
 
 CookieJar::CookieJar(const QString &path, QObject *parent) :
     QNetworkCookieJar(parent),
-    m_savePath(path)
+    m_savePath(path),
+    m_persistSessions(false)
 {
     load();
 }
@@ -61,7 +62,7 @@ void CookieJar::save() const
 
     QList<QNetworkCookie> cookies = allCookies();
     foreach (QNetworkCookie c, cookies) {
-        if (!c.isSessionCookie())
+        if (m_persistSessions || !c.isSessionCookie())
             out << c.toRawForm() << endl;
     }
 
@@ -110,6 +111,11 @@ void CookieJar::addCookie(const QString &cookieString)
         if (!found)
             insertCookie(cookie);
     }
+}
+
+void CookieJar::setPersistSessions(bool persist)
+{
+    m_persistSessions = persist;
 }
 
 void CookieJar::clearAll()

@@ -22,6 +22,9 @@ public:
     QString cookies() const;
     void addCookie(const QString &);
 
+    void setPersistSessions(bool);
+    bool persistSessions() const { return m_persistSessions; };
+
     void clearAll();
 
 protected:
@@ -30,6 +33,7 @@ protected:
 
 private:
     QString m_savePath;
+    bool m_persistSessions;
 };
 
 } } }

@@ -30,6 +30,7 @@ private:
     QString m_cachePath;
     qint64 m_maxCacheSize;
     QString m_cookieJarPath;
+    bool m_persistSessionCookies;
 };
 
 } } }
