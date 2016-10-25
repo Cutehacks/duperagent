@@ -277,3 +277,33 @@ p3.then(function(value) {
 });
 ```
 
+# NetworkActivityIndicator API
+
+The network activity indicator item exposes properties that can be used 
+to show when there are outstanding network requests in the application. There
+is a native implementation for iOS and there is also a generic implementation
+that works on all platforms (including iOS).
+
+Only network request created through Duperagent are considered.
+
+## enabled : bool
+
+A read-only property that is `true` when Duperagent has a non-zero number
+of pending network requests. It can be used to show a busy indicator or some
+other visual element to indicate that something is happening.
+
+## activationDelay : int
+
+Time (in ms) to wait before enabling the network activity indicator after new
+requests have been initiated. The default is `1000` ms.
+
+## completionDelay : int
+
+Time (in ms) to wait before disabling the network activity indicator after all
+requests have completed. The default is `170` ms.
+
+## enableNativeIndicator : bool
+
+A property that indicates if the native implementation of a network activity
+indicator should be used. This feature is only available on iOS. The default
+value of this property is `false`.
