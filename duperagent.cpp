@@ -9,8 +9,11 @@
 #include "config.h"
 #include "cookiejar.h"
 #include "promisemodule.h"
+#include "networkactivityindicator.h"
 
 namespace com { namespace cutehacks { namespace duperagent {
+
+static const char* DUPERAGENT_URI = "com.cutehacks.duperagent";
 
 extern ContentTypeMap contentTypes;
 
@@ -186,19 +189,32 @@ static QObject *promise_provider(QQmlEngine *engine, QJSEngine *)
     return new PromiseModule(engine);
 }
 
+static QObject *nai_provider(QQmlEngine *, QJSEngine *)
+{
+    return NetworkActivityIndicator::instance();
+}
+
 static void registerTypes()
 {
     qmlRegisterSingletonType<Request>(
-        "com.cutehacks.duperagent",
+        DUPERAGENT_URI,
         1, 0,
         "request",
         request_provider);
 
     qmlRegisterSingletonType<PromiseModule>(
-        "com.cutehacks.duperagent",
+        DUPERAGENT_URI,
         1, 0,
         "promise",
         promise_provider);
+
+    qmlRegisterSingletonType<NetworkActivityIndicator>(
+        DUPERAGENT_URI,
+        1, 0,
+        "NetworkActivityIndicator",
+        nai_provider);
+
+    qmlProtectModule(DUPERAGENT_URI, 1);
 }
 
 Q_COREAPP_STARTUP_FUNCTION(registerTypes)

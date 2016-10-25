@@ -20,6 +20,7 @@
 #include "config.h"
 #include "serialization.h"
 #include "promise.h"
+#include "networkactivityindicator.h"
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 6, 0)
 #include "jsvalueiterator.h"
@@ -497,6 +498,8 @@ void RequestPrototype::dispatchRequest()
         qWarning("Unsupported method");
     }
 
+    NetworkActivityIndicator::instance()->incrementActivityCount();
+
     emit started();
     emitEvent(EVENT_REQUEST, self());
 
@@ -519,6 +522,7 @@ void RequestPrototype::dispatchRequest()
 void RequestPrototype::handleFinished()
 {
     killTimer(m_timer);
+    NetworkActivityIndicator::instance()->decrementActivityCount();
 
     int status = m_reply->attribute(
                 QNetworkRequest::HttpStatusCodeAttribute).toInt();
