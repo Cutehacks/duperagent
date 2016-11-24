@@ -36,6 +36,10 @@ ResponsePrototype::ResponsePrototype(QQmlEngine *engine, QNetworkReply *reply) :
             // TODO: Implement parsing of form-urlencoded
 //        } else if (type.contains("multipart/form-data")) {
             // TODO: Implement parsing of form-data
+        } else if (type.contains("image/")) {
+            m_body = QString("data:%1;base64,%2")
+                    .arg(type)
+                    .arg(QString::fromLatin1(data.toBase64()));
         } else {
             m_body = QJSValue(m_text);
         }
