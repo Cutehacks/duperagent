@@ -9,7 +9,9 @@ HEADERS += $$PWD/duperagent.h \
     $$PWD/cookiejar.h \
     $$PWD/promise.h \
     $$PWD/promisemodule.h \
-    $$PWD/networkactivityindicator.h
+    $$PWD/networkactivityindicator.h \
+    $$PWD/imageutils.h \
+    $$PWD/multipartsource.h
 
 SOURCES += $$PWD/duperagent.cpp \
     $$PWD/request.cpp \
@@ -19,7 +21,9 @@ SOURCES += $$PWD/duperagent.cpp \
     $$PWD/cookiejar.cpp \
     $$PWD/promise.cpp \
     $$PWD/promisemodule.cpp \
-    $$PWD/networkactivityindicator.cpp
+    $$PWD/networkactivityindicator.cpp \
+    $$PWD/imageutils.cpp \
+    $$PWD/multipartsource.cpp
 
 contains(QT_CONFIG, ssl) | contains(QT_CONFIG, openssl) | contains(QT_CONFIG, openssl-linked) {
     HEADERS += $$PWD/ssl.h

@@ -10,6 +10,7 @@
 #include "cookiejar.h"
 #include "promisemodule.h"
 #include "networkactivityindicator.h"
+#include "imageutils.h"
 
 namespace com { namespace cutehacks { namespace duperagent {
 
@@ -194,6 +195,11 @@ static QObject *nai_provider(QQmlEngine *, QJSEngine *)
     return NetworkActivityIndicator::instance();
 }
 
+static QObject *iu_provider(QQmlEngine *engine, QJSEngine *)
+{
+    return new ImageUtils(engine);
+}
+
 static void registerTypes()
 {
     qmlRegisterSingletonType<Request>(
@@ -213,6 +219,12 @@ static void registerTypes()
         1, 0,
         "NetworkActivityIndicator",
         nai_provider);
+
+    qmlRegisterSingletonType<ImageUtils>(
+        DUPERAGENT_URI,
+        1, 0,
+        "ImageUtils",
+        iu_provider);
 
     qmlProtectModule(DUPERAGENT_URI, 1);
 }

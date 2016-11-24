@@ -21,6 +21,7 @@
 #include "serialization.h"
 #include "promise.h"
 #include "networkactivityindicator.h"
+#include "multipartsource.h"
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 6, 0)
 #include "jsvalueiterator.h"
@@ -229,35 +230,61 @@ QJSValue RequestPrototype::attach(const QJSValue &name, const QJSValue &path,
     dispositionHeader += name.toString();
     dispositionHeader += "\";";
 
-    QUrl url(path.toString());
-    QFile *file = new QFile(url.isLocalFile() ? url.toLocalFile() : path.toString(),
-                            m_multipart);
+    QString fname = filename.isString() ? filename.toString() : QString();
+    QString contentType;
+    QIODevice *bodyDevice(0);
 
-    if (!file->exists()) {
-        qWarning("File does not exist");
-        return self();
+    if (path.isQObject()) {
+        AbstractMultipartSource *source =
+            qobject_cast<AbstractMultipartSource *>(path.toQObject());
+
+        if (!source) {
+            qWarning("Object must subclass AbstractMultipartSource");
+            return self();
+        }
+
+        QBuffer *buffer = new QBuffer;
+        buffer->setData(source->data());
+        buffer->open(QIODevice::ReadOnly);
+        bodyDevice = buffer;
+
+        contentType = source->mimeType();
+    } else {
+        QUrl url(path.toString());
+        QFile *file = new QFile(url.isLocalFile() ? url.toLocalFile() : path.toString(),
+                                m_multipart);
+
+        if (!file->exists()) {
+            qWarning("File does not exist");
+            return self();
+        }
+
+        if (!file->open(QIODevice::ReadOnly)) {
+            qWarning("Could not open file for reading");
+            return self();
+        }
+
+        bodyDevice = file;
+
+        QFileInfo fileInfo(*file);
+        if (fname.isEmpty())
+            fname = fileInfo.fileName();
+
+        // TODO: Move the mimeDB somewhere more static
+        QMimeDatabase mimeDB;
+        contentType = mimeDB.mimeTypeForFile(fileInfo).name();
     }
 
-    if (!file->open(QIODevice::ReadOnly)) {
-        qWarning("Could not open file for reading");
-        return self();
-    }
-
-    QFileInfo fileInfo(*file);
-
-    QString fname = filename.isString() ? filename.toString() : fileInfo.fileName();
     dispositionHeader += " filename=\"" + fname + "\"";
 
     QHttpPart attachment;
     attachment.setHeader(QNetworkRequest::ContentDispositionHeader, dispositionHeader);
 
-    // TODO: Move the mimeDB somewhere more static
-    QMimeDatabase mimeDB;
-    QString contentType = mimeDB.mimeTypeForFile(fileInfo).name();
     if (!contentType.isEmpty())
         attachment.setHeader(QNetworkRequest::ContentTypeHeader, QVariant(contentType));
 
-    attachment.setBodyDevice(file);
+    m_attachments.add(bodyDevice);
+    attachment.setBodyDevice(bodyDevice);
 
     m_multipart->append(attachment);
 
@@ -579,6 +606,9 @@ void RequestPrototype::handleFinished()
     }
 
     emitEvent(EVENT_END, QJSValue::UndefinedValue);
+
+    // clean up any attachment bodies
+    m_attachments.clear();
 
     QJSValueList args;
 

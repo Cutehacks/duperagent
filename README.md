@@ -14,6 +14,8 @@ of XmlHttpRequest.
 * Built-in persistent cookie jar
 * Promise API
 * Secure connection (SSL/TLS) API
+* Network activity indicator
+* Image utilities
 
 # Limitations
 
@@ -307,3 +309,99 @@ requests have completed. The default is `170` ms.
 A property that indicates if the native implementation of a network activity
 indicator should be used. This feature is only available on iOS. The default
 value of this property is `false`.
+
+# ImageUtils API
+
+The ImageUtils module provides functionality for scaling and cropping an
+image file before uploading it via DuperAgent's `attach` function. The first
+step is to create a reader and then get and set properties on the reader
+before calling `read` to load the image with the given settings.
+
+## createReader
+
+This function accepts a file path to an image or to a base64 encoded data
+uri containing image data and returns an image reader. The image is *not*
+decoded at this point, only the reader is created.
+
+## size
+
+Returns an object with the `width` and `height` properties of the image without
+actually decoding the image.
+
+## fileSize
+
+Returns the filesize (in bytes) of the encoded image.
+
+## setScaledSize
+
+Sets the desired scaled size for the image when it is decoded. Depending on
+the image format, some decoders can do this efficiently without having
+to decode the full image first and then downscale.
+
+```js
+var reader = Http.ImageUtils.createReader(imagePath);
+reader.setScaledSize(200, 200, Image.PreserveAspectCrop);
+reader.read();
+```
+
+*NOTE*: Only the first 3 enumerations of `Image.fitMode` are supported in the
+final (optional) argument to the function. If the third argument is omitted,
+it defaults to `Image.Stretch`.
+
+## setClipRect
+
+Sets the clip rect for image reader.
+
+```js
+var reader = Http.ImageUtils.createReader(imagePath);
+reader.setClipRect(0, 0, 200, 200);
+reader.read();
+```
+
+See also QImageReader::setClipRect.
+
+## setScaledClipRect
+
+Sets a scaled clip rect for image reader.
+
+```js
+var reader = Http.ImageUtils.createReader(imagePath);
+reader.setScaledClipRect(0, 0, 200, 200);
+reader.read();
+```
+
+See also QImageReader::setScaledClipRect.
+
+## setAutoTransform
+
+Rotates the image if the metadata for the image indicates that it should.
+
+```js
+Http.ImageUtils.createReader(imagePath)
+    .setAutoTransform(true)
+    .setScaledSize(200, 200)
+    .read();
+```
+
+*NOTE*: This function has no effect on versions of Qt prior to Qt 5.5.0.
+
+##  read
+
+The function that actually reads and decodes the image into memory based on
+the settings previously configured on the reader. This function takes an
+optional object of options which can transcode the image to a different format
+and quality.
+
+```js
+Http.ImageUtils.createReader(imagePath)
+    .setScaledSize(200, 200)
+    .read({
+        transcode: {
+            format: "jpg",
+            quality: 50
+        }
+    });
+```
+
+The object returned from this function can be passed to the `attach`
+function of the `request` type as the second argument.

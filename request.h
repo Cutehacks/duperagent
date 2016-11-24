@@ -7,6 +7,7 @@
 #include <QtCore/QHash>
 #include <QtCore/QObject>
 #include <QtCore/QUrlQuery>
+#include <QtCore/QObjectCleanupHandler>
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkReply>
 #include <QtQml/QJSValue>
@@ -133,6 +134,7 @@ private:
     QHash<QString, QJSValueList> m_listeners;
     QScopedPointer<Promise> m_promise;
     QPair<QJSValue, QJSValue> m_executor;
+    QObjectCleanupHandler m_attachments;
 };
 
 } } }
