@@ -73,7 +73,6 @@ RequestPrototype::RequestPrototype(QQmlEngine *engine, Method method, const QUrl
     m_engine->setObjectOwnership(this, QQmlEngine::JavaScriptOwnership);
     m_self = m_engine->newQObject(this);
     m_headers = m_engine->newObject();
-    m_data = m_engine->newObject();
 }
 
 RequestPrototype::~RequestPrototype()
