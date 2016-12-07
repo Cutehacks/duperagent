@@ -87,10 +87,10 @@ QByteArray JsonCodec::stringify(const QJSValue &json)
 {
     QJsonDocument doc;
 
-    if (json.isObject()) {
+    if (json.isArray()) {
+       doc.setArray(stringifyArray(json));
+    } else if (json.isObject()) {
         doc.setObject(stringifyObject(json));
-    } else if (json.isArray()) {
-        doc.setArray(stringifyArray(json));
     }
 
     return doc.toJson(QJsonDocument::Compact);

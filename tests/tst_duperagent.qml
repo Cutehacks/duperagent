@@ -62,6 +62,23 @@ TestCase {
         async.wait(timeout);
     }
 
+    function test_post_json_array() {
+        Http.request
+        .post("http://httpbin.org/post")
+        .send(["foo", "bar", "baz"])
+        .end(function(err, res){
+            verify(!err, err);
+            compare(res.status, 200);
+            compare(Object.prototype.toString.call(res.body.json), "[object Array]")
+            compare(res.body.json[0], "foo");
+            compare(res.body.json[1], "bar");
+            compare(res.body.json[2], "baz");
+            done();
+        });
+
+        async.wait(timeout);
+    }
+
     function test_post_form() {
         Http.request
             .post("http://httpbin.org/post")
