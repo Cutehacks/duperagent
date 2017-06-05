@@ -523,7 +523,7 @@ TestCase {
     function test_ssl() {
         var fingerprint = "";
         Http.request
-            .get("https://httpbin.org/get")
+            .get("https://api.github.com")
             .on("secureConnect", function(event) {
                 var cert = event.getPeerCertificate();
                 fingerprint = cert.fingerprint;
@@ -535,6 +535,6 @@ TestCase {
         async.wait(timeout);
 
         // This fingerprint might need to be changed when the cert is renewed
-        compare(fingerprint, "9d:01:5c:8e:fd:4d:df:71:a4:99:ce:29:93:40:3f:5f:ee:74:d0:95");
+        compare(fingerprint, "35:85:74:ef:67:35:a7:ce:40:69:50:f3:c0:f6:80:cf:80:3b:2e:19");
     }
 }
