@@ -91,7 +91,7 @@ public:
 
 signals:
     void started();
-    void progress(int loaded, int total);
+    void progress(qint64 loaded, qint64 total);
     void response(QJSValue);
     void end();
 
