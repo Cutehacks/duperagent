@@ -3,6 +3,7 @@
 
 #include <QtCore/QFileInfo>
 #include <QtCore/QBuffer>
+#include <QtCore/QUrl>
 #include <QtGui/QImageReader>
 #include <QtQml/QQmlEngine>
 #include "imageutils.h"
@@ -34,7 +35,8 @@ Image::Image(QQmlEngine *engine, const QString &filename) :
         buffer->setData(QByteArray::fromBase64(data.toLatin1()));
         m_reader = new QImageReader(buffer);
     } else {
-        m_reader = new QImageReader(filename);
+        QUrl url(filename);
+        m_reader = new QImageReader(url.isLocalFile() ? url.toLocalFile() : filename);
     }
 }
 
