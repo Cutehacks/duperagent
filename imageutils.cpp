@@ -125,6 +125,11 @@ QJSValue Image::read(const QJSValue& options)
     }
 
     QImage img = m_reader->read();
+    if (img.isNull()) {
+        qWarning("Error reading image: %s", qUtf8Printable(m_reader->errorString()));
+        return self();
+    }
+
     QBuffer buffer(&m_data);
     buffer.open(QIODevice::WriteOnly);
     img.save(&buffer, format.constData(), quality);
