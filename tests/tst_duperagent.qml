@@ -107,18 +107,18 @@ TestCase {
         async.wait(timeout);
     }
 
-    function test_patch() {
-        Http.request
-            .patch("http://httpbin.org/patch")
-            .send({foo: "bar"})
-            .end(function(err, res){
-                verify(!err, err);
-                compare(res.status, 200);
-                done();
-            });
+    // function test_patch() {
+    //     Http.request
+    //         .patch("http://httpbin.org/patch")
+    //         .send({foo: "bar"})
+    //         .end(function(err, res){
+    //             verify(!err, err);
+    //             compare(res.status, 200);
+    //             done();
+    //         });
 
-        async.wait(timeout);
-    }
+    //     async.wait(timeout);
+    // }
 
     function test_delete() {
         Http.request

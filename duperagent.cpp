@@ -87,25 +87,25 @@ QJSValue Request::del(const QJSValue &url, const QJSValue &fn) const
     return proto->self();
 }
 
-QJSValue Request::patch(const QJSValue &url, const QJSValue &data, const QJSValue &fn) const
-{
-    RequestPrototype *proto = new RequestPrototype(
-                m_engine,
-                RequestPrototype::Patch,
-                QUrl(url.toString()));
+//QJSValue Request::patch(const QJSValue &url, const QJSValue &data, const QJSValue &fn) const
+//{
+//    RequestPrototype *proto = new RequestPrototype(
+//                m_engine,
+//                RequestPrototype::Patch,
+//                QUrl(url.toString()));
 
-    if (data.isCallable()) {
-        proto->end(data);
-    } else if (!data.isUndefined()){
-        proto->send(data);
-    }
+//    if (data.isCallable()) {
+//        proto->end(data);
+//    } else if (!data.isUndefined()){
+//        proto->send(data);
+//    }
 
-    if (fn.isCallable()) {
-        proto->end(fn);
-    }
+//    if (fn.isCallable()) {
+//        proto->end(fn);
+//    }
 
-    return proto->self();
-}
+//    return proto->self();
+//}
 
 QJSValue Request::post(const QJSValue &url, const QJSValue &data, const QJSValue &fn) const
 {
@@ -134,6 +134,26 @@ QJSValue Request::put(const QJSValue &url, const QJSValue &data, const QJSValue 
                 RequestPrototype::Put,
                 QUrl(url.toString()));
 
+    if (data.isCallable()) {
+        proto->end(data);
+    } else if (!data.isUndefined()){
+        proto->send(data);
+    }
+
+    if (fn.isCallable()) {
+        proto->end(fn);
+    }
+
+    return proto->self();
+}
+
+QJSValue Request::custom(const QJSValue &url, const QJSValue &verb, const QJSValue &data, const QJSValue &fn) const
+{
+    RequestPrototype *proto = new RequestPrototype(
+                m_engine,
+                RequestPrototype::Custom,
+                QUrl(url.toString()));
+    proto->setCustomVerb(verb);
     if (data.isCallable()) {
         proto->end(data);
     } else if (!data.isUndefined()){

@@ -46,6 +46,7 @@ static const QString METHOD_GET =       QStringLiteral("GET");
 static const QString METHOD_PUT =       QStringLiteral("PUT");
 static const QString METHOD_PATCH =     QStringLiteral("PATCH");
 static const QString METHOD_DELETE =    QStringLiteral("DELETE");
+static const QString METHOD_CUSTOME =   QStringLiteral("CUSTOM");
 
 static inline uint percent(qint64 loaded, qint64 total) {
     if (total > 0)
@@ -398,11 +399,12 @@ QString RequestPrototype::method() const
         return METHOD_GET;
     case Put:
         return METHOD_PUT;
-    case Patch:
-        return METHOD_PATCH;
     case Delete:
         return METHOD_DELETE;
+    case Custom:
+        return METHOD_CUSTOME;
     }
+
     return QString();
 }
 
@@ -415,12 +417,12 @@ void RequestPrototype::setMethod(const QString &method)
         m_method = Post;
     } else if (upper == METHOD_PUT) {
         m_method = Put;
-    } else if (upper == METHOD_PATCH) {
-        m_method = Patch;
     } else if (upper == METHOD_DELETE) {
         m_method = Delete;
     } else if (upper == METHOD_HEAD) {
         m_method = Head;
+    } else if (upper == METHOD_CUSTOME){
+        m_method = Custom;
     } else {
         qWarning("Invalid method: %s", qUtf8Printable(method));
     }
@@ -489,6 +491,7 @@ void RequestPrototype::dispatchRequest()
                     it.value().toString().toUtf8());
     }
 
+    //FIXME: Dear HTTP Patch, Excuse me but I had to remove you from supported methods for technical reason!
 
     switch (m_method) {
     case Get:
@@ -511,18 +514,28 @@ void RequestPrototype::dispatchRequest()
     case Delete:
         m_reply = m_network->deleteResource(*m_request);
         break;
-    case Patch:
-        m_request->setAttribute(QNetworkRequest::CustomVerbAttribute, "PATCH");
-        m_rawData = serializeData();
-        m_reply = m_network->sendCustomRequest(*m_request, "PATCH",
-                                               new QBuffer(&m_rawData, this));
-        break;
+//    case Patch:
+//        m_request->setAttribute(QNetworkRequest::CustomVerbAttribute, "PATCH");
+//        m_rawData = serializeData();
+//        m_reply = m_network->sendCustomRequest(*m_request, "PATCH",
+//                                               new QBuffer(&m_rawData, this));
+//        break;
     case Head:
         m_reply = m_network->head(*m_request);
+        break;
+    case Custom:
+        m_request->setAttribute(QNetworkRequest::CustomVerbAttribute, m_customVerb.toString());
+        if (m_multipart){
+            m_reply = m_network->sendCustomRequest(*m_request, m_customVerb.toString().toLatin1(), m_multipart);
+        } else {
+            m_reply = m_network->sendCustomRequest(*m_request, m_customVerb.toString().toLatin1(), serializeData());
+        }
         break;
     default:
         qWarning("Unsupported method");
     }
+
+
 
     NetworkActivityIndicator::instance()->incrementActivityCount();
 
@@ -688,13 +701,23 @@ void RequestPrototype::emitEvent(const QString &name, const QJSValue &event)
         callAndCheckError(*it, args);
 }
 
+QJSValue RequestPrototype::customVerb() const
+{
+    return m_customVerb;
+}
+
+void RequestPrototype::setCustomVerb(const QJSValue &customVerb)
+{
+    m_customVerb = customVerb;
+}
+
 #ifndef QT_NO_SSL
 void RequestPrototype::handleEncrypted()
 {
     // return if no one is listening
     if (m_listeners[EVENT_SECURE].length() == 0)
         return;
-
+    
     SecureConnectEvent *event = new SecureConnectEvent(m_engine, m_reply->sslConfiguration());
     emitEvent(EVENT_SECURE, event->self());
 }
