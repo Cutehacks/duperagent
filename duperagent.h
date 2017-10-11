@@ -34,15 +34,19 @@ public:
                               const QJSValue& = QJSValue()) const;
     Q_INVOKABLE QJSValue del(const QJSValue&,
                               const QJSValue& = QJSValue()) const;
-    Q_INVOKABLE QJSValue patch(const QJSValue&,
-                              const QJSValue& = QJSValue(),
-                              const QJSValue& = QJSValue()) const;
+//    Q_INVOKABLE QJSValue patch(const QJSValue&,
+//                              const QJSValue& = QJSValue(),
+//                              const QJSValue& = QJSValue()) const;
     Q_INVOKABLE QJSValue post(const QJSValue&,
                               const QJSValue& = QJSValue(),
                               const QJSValue& = QJSValue()) const;
     Q_INVOKABLE QJSValue put(const QJSValue&,
                               const QJSValue& = QJSValue(),
                               const QJSValue& = QJSValue()) const;
+    Q_INVOKABLE QJSValue custom(const QJSValue&,
+                                 const QJSValue& = QJSValue(),
+                                 const QJSValue& = QJSValue(),
+                                 const QJSValue& = QJSValue()) const;
 
     QJSValue cookie() const;
     void setCookie(const QJSValue &);

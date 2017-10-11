@@ -36,8 +36,9 @@ public:
         Post    = QNetworkAccessManager::PostOperation,
         Get     = QNetworkAccessManager::GetOperation,
         Put     = QNetworkAccessManager::PutOperation,
-        Patch   = QNetworkAccessManager::CustomOperation,
+//        Patch   = QNetworkAccessManager::CustomOperation,
         Delete  = QNetworkAccessManager::DeleteOperation,
+        Custom  = QNetworkAccessManager::CustomOperation,
     };
 
     enum ErrorType {
@@ -89,6 +90,9 @@ public:
     QJSValue &headers();
     void setHeaders(const QJSValue&);
 
+    QJSValue customVerb() const;
+    void setCustomVerb(const QJSValue &customVerb);
+
 signals:
     void started();
     void progress(qint64 loaded, qint64 total);
@@ -129,6 +133,7 @@ private:
     QJSValue m_callback;
     QJSValue m_data;
     QJSValue m_headers;
+    QJSValue m_customVerb;
     QByteArray m_rawData;
     QJSValue m_error;
     QHash<QString, QJSValueList> m_listeners;
