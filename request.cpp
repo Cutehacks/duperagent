@@ -534,7 +534,6 @@ void RequestPrototype::dispatchRequest()
     default:
         qWarning("Unsupported method");
     }
-    qDebug()<<"Dispatch request";
 
 
 

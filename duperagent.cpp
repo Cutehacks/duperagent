@@ -149,7 +149,6 @@ QJSValue Request::put(const QJSValue &url, const QJSValue &data, const QJSValue 
 
 QJSValue Request::custom(const QJSValue &url, const QJSValue &verb, const QJSValue &data, const QJSValue &fn) const
 {
-    qDebug()<<"Custom verb: "<< verb.toString();
     RequestPrototype *proto = new RequestPrototype(
                 m_engine,
                 RequestPrototype::Custom,
