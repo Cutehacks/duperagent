@@ -19,7 +19,7 @@ TestCase {
     }
 
     function initTestCase() {
-        Http.request.config({
+        Http.Request.config({
             proxy: "system" // for debugging with Charles Proxy
         });
     }
@@ -29,7 +29,7 @@ TestCase {
         var height = 600;
         var imageUrl = "https://dummyimage.com/" + width + "x" + height + "/000/fff.jpg";
 
-        Http.request
+        Http.Request
             .get(imageUrl)
             .then(function(res) {
                 var reader = Http.ImageUtils.createReader(res.body);
@@ -50,7 +50,7 @@ TestCase {
         var imageUrl = "https://dummyimage.com/" + width + "x" + height + "/000/fff.jpg";
 
         // Step 1: Download an image
-        var download = Http.request
+        var download = Http.Request
             .get(imageUrl)
             .then(function(res) {
                 return res.body;
@@ -65,7 +65,7 @@ TestCase {
 
         // Step 3: Upload the scaled down image
         var upload = scale.then(function(scaled) {
-            Http.request
+            Http.Request
                 .post("http://httpbin.org/post")
                 .attach('jpg', scaled)
                 .then(function(res) {

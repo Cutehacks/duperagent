@@ -33,7 +33,7 @@ for some applications, so to disable this behavior and revert to v0.x behavior, 
 function somewhere during initialization before making any requests:
 
 ```
-    Http.request.config({
+    Http.Request.config({
         cookieJar: false
     });
 ```
@@ -66,7 +66,7 @@ import com.cutehacks.duperagent 1.0 as Http
 
 ...
 
-    Http.request
+    Http.Request
         .get("http://httpbin.org/get")
         .timeout(5000)
         .end(function(err, res) {
@@ -98,7 +98,7 @@ signal. For example:
 
 ```
     Component.onCompleted: {
-        Http.request.config({
+        Http.Request.config({
             cache: false
         });
     }
@@ -113,7 +113,7 @@ a sensible path for the platform. If you wish to disable this behavior, for exam
 own cache, you can set this property to `false`. The property can be further customized by passing an object.
 
 ```
-    Http.request.config({
+    Http.Request.config({
         cache: {
             maxSize: 20000,
             location: "/path/to/cache"
@@ -132,7 +132,7 @@ have your own cookie jar, you can set this property to `false`. This property ca
 passing an object.
 
 ```
-    Http.request.config({
+    Http.Request.config({
         cookieJar: {
             location: "/path/to/cookies.txt"
         }
@@ -147,7 +147,7 @@ This option controls the proxy settings used by agent. By default Qt does not us
 the system proxy by setting this value to `"system"`.
 
 ```
-    Http.request.config({
+    Http.Request.config({
         proxy: "system"
     });
 ```
@@ -183,7 +183,7 @@ Since the Javascript engine in QML does not allow us to expose new types with co
 `new Promise(executor)` syntax is not supported. Instead the create function can be used like so:
 
 ```js
-var p = Http.promise.create(function(resolve, reject) {
+var p = Http.Promise.create(function(resolve, reject) {
 
     asynchronousStuff(function(success) {
         if (success) {
@@ -207,7 +207,7 @@ p1.then(function(value) {
 Returns a resolved promise.
 
 ```js
-var p = Http.promise.resolve(5);
+var p = Http.Promise.resolve(5);
 
 p.then(function(value) {
     console.log(value); // 5
@@ -219,7 +219,7 @@ p.then(function(value) {
 Returns a rejected promise.
 
 ```js
-var p = Http.promise.reject("error");
+var p = Http.Promise.reject("error");
 
 p.catch(function(reason) {
     console.log(reason); // "error"
@@ -237,15 +237,15 @@ If one of the original promises fail, the returned promise will be rejected with
 same reason.
 
 ```js
-var p1 = Http.promise.resolve(3);
+var p1 = Http.Promise.resolve(3);
 var p2 = 1337;
-var p3 = Http.request
+var p3 = Http.Request
         .get("http://httpbin.org/get")
         .then(function(resp) {
             return resp.body;
         });
 
-var p4 = Http.promise.all([p1, p2, p3]);
+var p4 = Http.Promise.all([p1, p2, p3]);
 
 p4.then(function(values) {
     console.log(values[0]); // 3
@@ -260,19 +260,19 @@ Concurrently executes several promises and returns another promise that is fulfi
 when the first of those promises is fulfilled.
 
 ```js
-var p1 = Http.request
+var p1 = Http.Request
      .get("http://httpbin.org/delay/3")
      .then(function(resp) {
          return 3;
      });
 
-var p2 = Http.request
+var p2 = Http.Request
     .get("http://httpbin.org/delay/1")
     .then(function(resp) {
         return 1;
     });
 
-var p3 = Http.promise.race([p1, p2]);
+var p3 = Http.Promise.race([p1, p2]);
 
 p3.then(function(value) {
     console.log(value); // 1
