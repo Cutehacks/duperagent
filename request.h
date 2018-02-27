@@ -63,6 +63,7 @@ public:
     Q_INVOKABLE QJSValue accept(const QJSValue&);
     Q_INVOKABLE QJSValue auth(const QString&, const QString&);
     Q_INVOKABLE QJSValue redirects(int);
+    Q_INVOKABLE QJSValue retries(int);
     Q_INVOKABLE QJSValue query(const QJSValue&);
     Q_INVOKABLE QJSValue field(const QJSValue&, const QJSValue& = QJSValue());
     Q_INVOKABLE QJSValue attach(const QJSValue&, const QJSValue& = QJSValue(),
@@ -112,6 +113,7 @@ protected:
     QJSValue createError(const QString&, ErrorType type = Error);
     QJSValue createProgressEvent(bool, qint64, qint64);
     void emitEvent(const QString&, const QJSValue&);
+    bool shouldRetry() const;
 
 private:
     Method m_method;
@@ -125,6 +127,8 @@ private:
     int m_timer;
     int m_redirects;
     int m_redirectCount;
+    int m_maxRetries;
+    int m_retries;
     QUrlQuery m_query;
     QJSValue m_callback;
     QJSValue m_data;

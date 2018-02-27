@@ -65,6 +65,8 @@ RequestPrototype::RequestPrototype(QQmlEngine *engine, Method method, const QUrl
     m_timer(0),
     m_redirects(5),
     m_redirectCount(0),
+    m_maxRetries(0),
+    m_retries(0),
     m_promise(0)
 {
     Config::instance()->init(m_engine);
@@ -173,6 +175,12 @@ QJSValue RequestPrototype::auth(const QString &user, const QString &password)
 QJSValue RequestPrototype::redirects(int redirects)
 {
     m_redirects = redirects;
+    return self();
+}
+
+QJSValue RequestPrototype::retries(int retries)
+{
+    m_maxRetries = retries;
     return self();
 }
 
@@ -555,6 +563,17 @@ void RequestPrototype::handleFinished()
     QVariant redir = m_reply->attribute(
                 QNetworkRequest::RedirectionTargetAttribute);
 
+    if (shouldRetry() && m_retries < m_maxRetries) {
+        QNetworkRequest *req = new QNetworkRequest(*m_request);
+        delete m_request;
+        m_request = req;
+        m_reply->deleteLater();
+        m_reply = 0;
+        m_retries++;
+        dispatchRequest();
+        return;
+    }
+
     if (redir.isValid()) {
         m_redirectCount++;
         if (m_redirectCount <= m_redirects) {
@@ -686,6 +705,14 @@ void RequestPrototype::emitEvent(const QString &name, const QJSValue &event)
     QJSValueList listeners = m_listeners[name];
     for (QJSValueList::iterator it = listeners.begin(); it != listeners.end(); it++)
         callAndCheckError(*it, args);
+}
+
+bool RequestPrototype::shouldRetry() const
+{
+    QNetworkReply::NetworkError err = m_reply->error();
+    if (err < QNetworkReply::ContentAccessDenied)
+        return true;
+    return false;
 }
 
 #ifndef QT_NO_SSL
