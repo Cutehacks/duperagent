@@ -327,6 +327,106 @@ TestCase {
         async.wait(timeout);
     }
 
+    function test_cache_load_always_cache() {
+        sleep(5000);
+
+        Http.Request
+            .get("http://httpbin.org/cache/3")
+            .cacheSave(true)
+            .end(function(err, res){
+                verify(!err);
+                verify(!res.fromCache);
+                done();
+            });
+
+        async.wait(timeout);
+        async.clear();
+
+        sleep(5000);
+
+        Http.Request
+            .get("http://httpbin.org/cache/3")
+            .cacheLoad(Http.CacheControl.AlwaysCache)
+            .end(function(err, res){
+                verify(res.fromCache);
+                done();
+            });
+
+        async.wait(timeout);
+    }
+
+    function test_cache_load_always_network() {
+        sleep(5000);
+
+        Http.Request
+            .get("http://httpbin.org/cache/3")
+            .cacheSave(true)
+            .end(function(err, res){
+                verify(!res.fromCache);
+                done();
+            });
+
+        async.wait(timeout);
+        async.clear();
+
+        Http.Request
+            .get("http://httpbin.org/cache/3")
+            .cacheLoad(Http.CacheControl.AlwaysNetwork)
+            .end(function(err, res){
+                verify(!res.fromCache);
+                done();
+            });
+
+        async.wait(timeout);
+    }
+
+    function test_cache_save() {
+        sleep(5000);
+
+        Http.Request
+            .get("http://httpbin.org/cache/3")
+            .cacheSave(true)
+            .end(function(err, res){
+                verify(!res.fromCache);
+                done();
+            });
+
+        async.wait(timeout);
+        async.clear();
+
+        Http.Request
+            .get("http://httpbin.org/cache/3")
+            .end(function(err, res){
+                verify(res.fromCache);
+                done();
+            });
+
+        async.wait(timeout);
+        async.clear();
+
+        sleep(5000);
+
+        Http.Request
+            .get("http://httpbin.org/cache/3")
+            .cacheSave(false)
+            .end(function(err, res){
+                verify(!res.fromCache);
+                done();
+            });
+
+        async.wait(timeout);
+        async.clear();
+
+        Http.Request
+            .get("http://httpbin.org/cache/3")
+            .end(function(err, res){
+                verify(!res.fromCache);
+                done();
+            });
+
+        async.wait(timeout);
+    }
+
     function test_multipart() {
         Http.Request
             .post("http://httpbin.org/post")

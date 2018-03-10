@@ -19,6 +19,19 @@ class QQmlEngine;
 
 namespace com { namespace cutehacks { namespace duperagent {
 
+class CacheControl : public QObject {
+    Q_OBJECT
+    Q_ENUMS(CacheLoadControl)
+
+public:
+    enum CacheLoadControl {
+        AlwaysNetwork = QNetworkRequest::AlwaysNetwork,
+        PreferNetwork = QNetworkRequest::PreferNetwork,
+        PreferCache = QNetworkRequest::PreferCache,
+        AlwaysCache = QNetworkRequest::AlwaysCache
+    };
+};
+
 typedef QHash<QString, QByteArray> ContentTypeMap;
 class Promise;
 
@@ -63,6 +76,8 @@ public:
     Q_INVOKABLE QJSValue accept(const QJSValue&);
     Q_INVOKABLE QJSValue auth(const QString&, const QString&);
     Q_INVOKABLE QJSValue redirects(int);
+    Q_INVOKABLE QJSValue cacheSave(bool);
+    Q_INVOKABLE QJSValue cacheLoad(int);
     Q_INVOKABLE QJSValue query(const QJSValue&);
     Q_INVOKABLE QJSValue field(const QJSValue&, const QJSValue& = QJSValue());
     Q_INVOKABLE QJSValue attach(const QJSValue&, const QJSValue& = QJSValue(),

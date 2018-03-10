@@ -176,6 +176,19 @@ QJSValue RequestPrototype::redirects(int redirects)
     return self();
 }
 
+QJSValue RequestPrototype::cacheSave(bool enabled)
+{
+    m_request->setAttribute(QNetworkRequest::CacheSaveControlAttribute,
+                            enabled);
+    return self();
+}
+
+QJSValue RequestPrototype::cacheLoad(int value)
+{
+    m_request->setAttribute(QNetworkRequest::CacheLoadControlAttribute,
+                            value);
+    return self();
+}
 
 QJSValue RequestPrototype::query(const QJSValue &query)
 {
