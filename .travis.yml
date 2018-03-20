@@ -4,7 +4,7 @@ env:
   - DISPLAY=:99.0
 
 before_install:
-  - sudo add-apt-repository --yes ppa:beineri/opt-qt542
+  - sudo add-apt-repository --yes ppa:beineri/opt-qt542-trusty
   - sudo apt-get update -qq
   - sudo apt-get install -qq qt54base qt54declarative
   - sh -e /etc/init.d/xvfb start

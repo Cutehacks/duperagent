@@ -238,6 +238,12 @@ static void registerTypes()
         "ImageUtils",
         iu_provider);
 
+    qmlRegisterUncreatableType<CacheControl>(
+        DUPERAGENT_URI,
+        1, 0,
+        "CacheControl",
+        "Duperagent CacheControl enums.");
+
     qmlProtectModule(DUPERAGENT_URI, 1);
 }
 
