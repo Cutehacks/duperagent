@@ -167,6 +167,39 @@ possible to overwrite cookies marked as *HttpOnly*. Attempts to overwrite these 
 
 This function will clear all saved cookies including those marked as *HttpOnly*.
 
+## cacheSave(boolean)
+
+This function is set to override the cache save behavior for a single request. Setting it to `true` will enable
+caching, while `false` implies the response will not be cached.
+
+```
+  Http.Request
+      .get("http://httpbin.org/cache/3")
+      .cacheSave(false)
+      .end(function(err, res) {
+        // ...
+      });
+
+```
+
+## ﻿cacheLoad(﻿Http.CacheControl)
+
+This function is set to override the cache behavior for a single request. It can have the following values:
+ * ﻿`Http.CacheControl.AlwaysNetwork`
+ * ﻿`Http.CacheControl.PreferNetwork` (default)
+ * ﻿`Http.CacheControl.PreferCache`
+ * ﻿`Http.CacheControl.AlwaysCache`
+
+```
+  Http.Request
+      .get("http://httpbin.org/cache/3")
+      .cacheLoad(Http.CacheControl.AlwaysNetwork)
+      .end(function(err, res) {
+        // ...
+      });
+
+```
+
 # Promise API
 
 This package contains an implementation of the [Promises/A+](https://promisesaplus.com/) specification and also 
