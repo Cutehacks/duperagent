@@ -28,11 +28,12 @@ ResponsePrototype::ResponsePrototype(QQmlEngine *engine, QNetworkReply *reply) :
     if (m_reply->isReadable()) {
         QByteArray rawdata = m_reply->readAll();
         QByteArray data;
-        if (contentEncoding  == QString("gzip")) {
-            if(! gzipDecompress(rawdata, data))
-            {
-            // TODO: add error handling
-            }
+        if (
+					contentEncoding  == QString("gzip") &&
+					data.at(0) == (char) 0x1f &&
+					data.at(1) == (char) 0x8b
+				) {
+            gzipDecompress(rawdata, data);
         } else {
             data  = rawdata;
         }
