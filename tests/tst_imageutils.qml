@@ -67,7 +67,7 @@ TestCase {
         var upload = scale.then(function(scaled) {
             Http.Request
                 .post("http://httpbin.org/post")
-                .attach('jpg', scaled)
+                .attach('jpg', scaled, 'scaled.jpg')
                 .then(function(res) {
                     compare(res.body.files.jpg, scaled.toJSON())
                     done();
