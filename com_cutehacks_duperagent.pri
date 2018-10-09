@@ -25,6 +25,8 @@ SOURCES += $$PWD/duperagent.cpp \
     $$PWD/imageutils.cpp \
     $$PWD/multipartsource.cpp
 
+LIBS += -lz
+
 contains(QT_CONFIG, ssl) | contains(QT_CONFIG, openssl) | contains(QT_CONFIG, openssl-linked) {
     HEADERS += $$PWD/ssl.h
     SOURCES += $$PWD/ssl.cpp

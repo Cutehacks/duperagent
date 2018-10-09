@@ -6,11 +6,16 @@
 #define RESPONSE_H
 #include <QtCore/QObject>
 #include <QtQml/QJSValue>
+#include <QByteArray>
 
 class QQmlEngine;
 class QNetworkReply;
 
 #include "qpm.h"
+
+
+#define GZIP_WINDOWS_BIT 15 + 16
+#define GZIP_CHUNK_SIZE 32 * 1024
 
 namespace com { namespace cutehacks { namespace duperagent {
 
@@ -68,6 +73,7 @@ public:
 protected:
     bool typeEquals(int code) const;
     bool statusEquals(int code) const;
+    bool gzipDecompress(QByteArray input, QByteArray &output);
 
 private:
     QQmlEngine *m_engine;
