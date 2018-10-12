@@ -244,6 +244,12 @@ static void registerTypes()
         "CacheControl",
         "Duperagent CacheControl enums.");
 
+    qmlRegisterUncreatableType<ResponseType>(
+                DUPERAGENT_URI,
+                1, 0,
+                "ResponseType",
+                "Duperagent ResponseType enums.");
+
     qmlProtectModule(DUPERAGENT_URI, 1);
 }
 

@@ -22,6 +22,7 @@
 #include "promise.h"
 #include "networkactivityindicator.h"
 #include "multipartsource.h"
+#include "duperagent.h"
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 6, 0)
 #include "jsvalueiterator.h"
@@ -65,7 +66,8 @@ RequestPrototype::RequestPrototype(QQmlEngine *engine, Method method, const QUrl
     m_timer(0),
     m_redirects(5),
     m_redirectCount(0),
-    m_promise(0)
+    m_promise(0),
+    m_responseType(duperagent::ResponseType::Undefined)
 {
     Config::instance()->init(m_engine);
     m_request = new QNetworkRequest(QUrl(url.toString()));
@@ -624,7 +626,7 @@ void RequestPrototype::handleFinished()
 
     QJSValueList args;
 
-    ResponsePrototype *rep = new ResponsePrototype(m_engine, m_reply);
+    ResponsePrototype *rep = new ResponsePrototype(m_engine, m_reply, m_responseType);
     QJSValue res = m_engine->newQObject(rep);
     args << m_error << m_engine->newQObject(rep);
 
@@ -700,6 +702,13 @@ void RequestPrototype::emitEvent(const QString &name, const QJSValue &event)
     for (QJSValueList::iterator it = listeners.begin(); it != listeners.end(); it++)
         callAndCheckError(*it, args);
 }
+
+QJSValue RequestPrototype::responseType(int responseType)
+{
+    m_responseType = responseType;
+    return self();
+}
+
 
 #ifndef QT_NO_SSL
 void RequestPrototype::handleEncrypted()
