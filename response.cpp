@@ -5,13 +5,15 @@
 #include <QtCore/QTextCodec>
 #include <QtNetwork/QNetworkReply>
 #include <QtQml/QQmlEngine>
+#include <QJsonObject>
 
 #include "response.h"
 #include "serialization.h"
+#include "duperagent.h"
 
 namespace com { namespace cutehacks { namespace duperagent {
 
-ResponsePrototype::ResponsePrototype(QQmlEngine *engine, QNetworkReply *reply) : QObject(0),
+ResponsePrototype::ResponsePrototype(QQmlEngine *engine, QNetworkReply *reply, int responseType) : QObject(0),
     m_engine(engine),
     m_reply(reply)
 {
@@ -28,20 +30,53 @@ ResponsePrototype::ResponsePrototype(QQmlEngine *engine, QNetworkReply *reply) :
         QTextCodec *text = QTextCodec::codecForName(m_charset.toLatin1());
         m_text = text ? text->makeDecoder()->toUnicode(data) : QString::fromUtf8(data);
 
-        if (type.contains("application/json")) {
-            // TODO: add error handling
-            JsonCodec json(m_engine);
-            m_body = json.parse(data);
-//        } else if (type.contains("application/x-www-form-urlencoded")) {
-            // TODO: Implement parsing of form-urlencoded
-//        } else if (type.contains("multipart/form-data")) {
-            // TODO: Implement parsing of form-data
-        } else if (type.contains("image/")) {
-            m_body = QString("data:%1;base64,%2")
-                    .arg(type)
-                    .arg(QString::fromLatin1(data.toBase64()));
-        } else {
-            m_body = QJSValue(m_text);
+        switch (responseType)
+        {
+            case ResponseType::Text:
+            {
+                m_body = m_text;
+                break;
+            }
+            case ResponseType::Json:
+            {
+                if (!type.contains("application/json")) {
+                    m_body = QJsonObject();
+                    break;
+                }
+                // TODO: add error handling
+                JsonCodec json(m_engine);
+                m_body.setValue(json.parse(data).toVariant());
+                break;
+            }
+            case ResponseType::Blob:
+            {
+                m_body = data;
+                break;
+            }
+            case ResponseType::ArrayBuffer:
+            {
+                m_body = data;
+                break;
+            }
+            default:
+            {
+                if (type.contains("application/json")) {
+                    // TODO: add error handling
+                    JsonCodec json(m_engine);
+                    m_body.setValue(json.parse(data).toVariant());
+        //        } else if (type.contains("application/x-www-form-urlencoded")) {
+                    // TODO: Implement parsing of form-urlencoded
+        //        } else if (type.contains("multipart/form-data")) {
+                    // TODO: Implement parsing of form-data
+                } else if (type.contains("image/")) {
+                    m_body = QString("data:%1;base64,%2")
+                            .arg(type)
+                            .arg(QString::fromLatin1(data.toBase64()));
+                } else {
+                    m_body = m_text;
+                }
+                break;
+            }
         }
     }
 
@@ -114,7 +149,7 @@ QString ResponsePrototype::charset() const
     return m_charset;
 }
 
-QJSValue ResponsePrototype::body() const
+QVariant ResponsePrototype::body() const
 {
     return m_body;
 }

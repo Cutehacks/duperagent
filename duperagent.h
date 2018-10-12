@@ -15,6 +15,19 @@ class QJsEngine;
 
 namespace com { namespace cutehacks { namespace duperagent {
 
+class ResponseType : public QObject {
+    Q_OBJECT
+    Q_ENUMS(Types)
+public:
+    enum Types {
+        Undefined   = 0,
+        Text        = 1,
+        Json        = 2,
+        Blob        = 3,
+        ArrayBuffer = 4
+    };
+};
+
 class Request : public QObject
 {
     Q_OBJECT

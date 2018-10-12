@@ -22,7 +22,6 @@ namespace com { namespace cutehacks { namespace duperagent {
 class CacheControl : public QObject {
     Q_OBJECT
     Q_ENUMS(CacheLoadControl)
-
 public:
     enum CacheLoadControl {
         AlwaysNetwork = QNetworkRequest::AlwaysNetwork,
@@ -104,6 +103,8 @@ public:
     QJSValue &headers();
     void setHeaders(const QJSValue&);
 
+    Q_INVOKABLE QJSValue responseType(int);
+
 signals:
     void started();
     void progress(qint64 loaded, qint64 total);
@@ -150,6 +151,7 @@ private:
     QScopedPointer<Promise> m_promise;
     QPair<QJSValue, QJSValue> m_executor;
     QObjectCleanupHandler m_attachments;
+    int m_responseType;
 };
 
 } } }

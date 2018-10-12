@@ -6,6 +6,7 @@
 #define RESPONSE_H
 #include <QtCore/QObject>
 #include <QtQml/QJSValue>
+#include<QVariant>
 
 class QQmlEngine;
 class QNetworkReply;
@@ -36,11 +37,11 @@ class ResponsePrototype : public QObject {
     Q_PROPERTY(int statusType READ statusType)
     Q_PROPERTY(QString text READ text)
     Q_PROPERTY(QString charset READ charset)
-    Q_PROPERTY(QJSValue body READ body)
+    Q_PROPERTY(QVariant body READ body)
     Q_PROPERTY(QJSValue header READ header)
 
 public:
-    ResponsePrototype(QQmlEngine *, QNetworkReply *);
+    ResponsePrototype(QQmlEngine *, QNetworkReply *, int);
     ~ResponsePrototype();
 
     bool info() const;
@@ -62,7 +63,7 @@ public:
     int statusType() const;
     QString text() const;
     QString charset() const;
-    QJSValue body() const;
+    QVariant body() const;
     QJSValue header() const;
 
 protected:
@@ -74,7 +75,7 @@ private:
     QNetworkReply *m_reply;
     QString m_text;
     QString m_charset;
-    QJSValue m_body;
+    QVariant m_body;
     QJSValue m_header;
 };
 
