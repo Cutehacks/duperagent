@@ -201,9 +201,9 @@ This function is set to override the cache behavior for a single request. It can
 ```
 
 ## responseType
-This function used for specify the type of response `body`, responseType can set to one of `ResponseType` enumrations, By default the ResponseType is set to the `ResponseType.Auto`.
+This function is used to specify the type of response `body`, responseType can be set to one of the ResponseType enumerations. By default the ResponseType is set to the `ResponseType.Auto`.
 It can have the following values:
-* ﻿`Http.ResponseType.Auto`: Autamatic body parising based on `content-type`
+* ﻿`Http.ResponseType.Auto`: Automatic body parising based on `content-type`
 * ﻿`Http.ResponseType.Text`: String response, equal to `response.text`
 * ﻿`Http.ResponseType.Json`: Javascript object, if response not a valid json, body return an empty javascript object
 * ﻿`Http.ResponseType.ArrayBuffer`: Raw binary data as an javascript ArrayBuffer object
