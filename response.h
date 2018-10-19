@@ -37,7 +37,7 @@ class ResponsePrototype : public QObject {
     Q_PROPERTY(int statusType READ statusType)
     Q_PROPERTY(QString text READ text)
     Q_PROPERTY(QString charset READ charset)
-    Q_PROPERTY(QVariant body READ body)
+    Q_PROPERTY(QJSValue body READ body)
     Q_PROPERTY(QJSValue header READ header)
 
 public:
@@ -63,7 +63,7 @@ public:
     int statusType() const;
     QString text() const;
     QString charset() const;
-    QVariant body() const;
+    QJSValue body() const;
     QJSValue header() const;
 
 protected:
@@ -75,7 +75,7 @@ private:
     QNetworkReply *m_reply;
     QString m_text;
     QString m_charset;
-    QVariant m_body;
+    QJSValue m_body;
     QJSValue m_header;
 };
 

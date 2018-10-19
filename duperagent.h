@@ -20,7 +20,7 @@ class ResponseType : public QObject {
     Q_ENUMS(Types)
 public:
     enum Types {
-        Undefined   = 0,
+        Auto        = 0,
         Text        = 1,
         Json        = 2,
         Blob        = 3,

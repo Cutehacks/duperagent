@@ -637,4 +637,75 @@ TestCase {
         // This fingerprint might need to be changed when the cert is renewed
         compare(fingerprint, "5f:f1:60:31:09:04:3e:f2:90:d2:b0:8a:50:38:04:e8:37:9f:bc:76");
     }
+
+    function test_responseType_auto() {
+        Http.Request
+            .get("http://httpbin.org/get")
+            .responseType(Http.ResponseType.Auto)
+            .end(function(err, res){
+                verify(!err, err);
+                compare(res.status, 200);
+                compare(res.body.url, "http://httpbin.org/get")
+                done();
+            });
+
+        async.wait(timeout);
+    }
+
+    function test_responseType_json() {
+        Http.Request
+            .get("http://httpbin.org/get")
+            .responseType(Http.ResponseType.Json)
+            .end(function(err, res){
+                verify(!err, err);
+                compare(res.status, 200);
+                compare(res.body.url, "http://httpbin.org/get")
+                done();
+            });
+
+        async.wait(timeout);
+    }
+
+    function test_responseType_not_json() {
+        Http.Request
+            .get("http://httpbin.org/html")
+            .responseType(Http.ResponseType.Json)
+            .end(function(err, res){
+                verify(!err, err);
+                compare(res.status, 200);
+                compare(typeof(Object()), typeof(res.body))
+                done();
+            });
+
+        async.wait(timeout);
+    }
+
+    function test_responseType_text() {
+        Http.Request
+            .get("http://httpbin.org/html")
+            .responseType(Http.ResponseType.Text)
+            .end(function(err, res){
+                verify(!err, err);
+                compare(res.status, 200);
+                compare(typeof(String()), typeof(res.body))
+                done();
+            });
+
+        async.wait(timeout);
+    }
+
+    function test_responseType_arraybuffer() {
+        Http.Request
+            .get("http://httpbin.org/image/jpeg")
+            .responseType(Http.ResponseType.ArrayBuffer)
+            .end(function(err, res){
+                verify(!err, err);
+                compare(res.status, 200);
+                compare(res.body.byteLength, 35588);
+                compare(typeof(new ArrayBuffer(0)), typeof(res.body));
+                done();
+            });
+
+        async.wait(timeout);
+    }
 }
