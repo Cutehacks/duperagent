@@ -34,28 +34,29 @@ ResponsePrototype::ResponsePrototype(QQmlEngine *engine, QNetworkReply *reply, i
         {
             case ResponseType::Text:
             {
-                m_body = m_text;
+                m_body = QJSValue(m_text);
                 break;
             }
             case ResponseType::Json:
             {
                 if (!type.contains("application/json")) {
-                    m_body = QJsonObject();
+                    JsonCodec json(m_engine);
+                    m_body = json.parse("{}");
                     break;
                 }
                 // TODO: add error handling
                 JsonCodec json(m_engine);
-                m_body.setValue(json.parse(data).toVariant());
+                m_body = json.parse(data);
                 break;
             }
             case ResponseType::Blob:
             {
-                m_body = data;
+                m_body = m_engine->toScriptValue<QByteArray>(data);
                 break;
             }
             case ResponseType::ArrayBuffer:
             {
-                m_body = data;
+                m_body = m_engine->toScriptValue<QByteArray>(data);
                 break;
             }
             default:
@@ -63,7 +64,7 @@ ResponsePrototype::ResponsePrototype(QQmlEngine *engine, QNetworkReply *reply, i
                 if (type.contains("application/json")) {
                     // TODO: add error handling
                     JsonCodec json(m_engine);
-                    m_body.setValue(json.parse(data).toVariant());
+                    m_body = json.parse(data);
         //        } else if (type.contains("application/x-www-form-urlencoded")) {
                     // TODO: Implement parsing of form-urlencoded
         //        } else if (type.contains("multipart/form-data")) {
@@ -73,7 +74,7 @@ ResponsePrototype::ResponsePrototype(QQmlEngine *engine, QNetworkReply *reply, i
                             .arg(type)
                             .arg(QString::fromLatin1(data.toBase64()));
                 } else {
-                    m_body = m_text;
+                    m_body = QJSValue(m_text);
                 }
                 break;
             }
@@ -149,7 +150,7 @@ QString ResponsePrototype::charset() const
     return m_charset;
 }
 
-QVariant ResponsePrototype::body() const
+QJSValue ResponsePrototype::body() const
 {
     return m_body;
 }

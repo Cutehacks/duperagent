@@ -67,7 +67,7 @@ RequestPrototype::RequestPrototype(QQmlEngine *engine, Method method, const QUrl
     m_redirects(5),
     m_redirectCount(0),
     m_promise(0),
-    m_responseType(duperagent::ResponseType::Undefined)
+    m_responseType(duperagent::ResponseType::Auto)
 {
     Config::instance()->init(m_engine);
     m_request = new QNetworkRequest(QUrl(url.toString()));
