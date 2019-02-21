@@ -625,6 +625,11 @@ void RequestPrototype::handleFinished()
     QJSValueList args;
 
     ResponsePrototype *rep = new ResponsePrototype(m_engine, m_reply);
+
+    if (m_error.isError()) {
+        m_error.setProperty("response", m_engine->newQObject(rep));
+    }
+
     QJSValue res = m_engine->newQObject(rep);
     args << m_error << m_engine->newQObject(rep);
 
