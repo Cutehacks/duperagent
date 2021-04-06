@@ -202,11 +202,11 @@ static QObject *iu_provider(QQmlEngine *engine, QJSEngine *)
 
 static void registerTypes()
 {
-    qmlRegisterSingletonType<Request>(
-        DUPERAGENT_URI,
-        1, 0,
-        "request",
-        request_provider);
+//     qmlRegisterSingletonType<Request>(
+//         DUPERAGENT_URI,
+//         1, 0,
+//         "request",
+//         request_provider);
 
     qmlRegisterSingletonType<Request>(
         DUPERAGENT_URI,
@@ -214,11 +214,11 @@ static void registerTypes()
         "Request",
         request_provider);
 
-    qmlRegisterSingletonType<PromiseModule>(
-        DUPERAGENT_URI,
-        1, 0,
-        "promise",
-        promise_provider);
+//     qmlRegisterSingletonType<PromiseModule>(
+//         DUPERAGENT_URI,
+//         1, 0,
+//         "promise",
+//         promise_provider);
 
     qmlRegisterSingletonType<PromiseModule>(
         DUPERAGENT_URI,
