@@ -91,7 +91,7 @@ target_link_libraries(
 set_target_properties(${PROJECT_NAME} PROPERTIES DEBUG_POSTFIX d)
 
 # Install script
-option(${PROJECT_NAME}_INSTALL "Enable Installing as Library" OFF)
+option(${PROJECT_NAME}_INSTALL "Enable Installing as Library" ON)
 
 if(${PROJECT_NAME}_INSTALL)
   # Offer the user the choice of overriding the installation directories

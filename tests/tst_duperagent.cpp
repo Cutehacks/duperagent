@@ -4,6 +4,7 @@
 #include <QQmlContext>
 #include <QtQuickTest/quicktest.h>
 #include "../duperagent.h"
+#include <QDebug>
 
 class Setup : public QObject
 {
@@ -13,8 +14,9 @@ public:
     Setup() {}
 
 public slots:
-    void qmlEngineAvailable(QQmlEngine *)    {
+    void qmlEngineAvailable(QQmlEngine * engine)    {
         com::cutehacks::duperagent::registerTypes();
+        qDebug() << engine->importPathList();
     }
 };
 
