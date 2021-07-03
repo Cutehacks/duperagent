@@ -130,9 +130,9 @@ if(${PROJECT_NAME}_INSTALL)
           DESTINATION ${CONFIG_PACKAGE_LOCATION})
 endif()
 
-option(ENABLE_TESTING "Enable Test Builds" ON)
+option(${PROJECT_NAME}_ENABLE_TESTING "Enable Test Builds" ON)
 
-if(ENABLE_TESTING)
+if(${PROJECT_NAME}_ENABLE_TESTING)
   message(STATUS "Building Tests")
   include(CTest)
   add_subdirectory(tests)

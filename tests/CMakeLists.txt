@@ -1,9 +1,13 @@
-project(tests)
+project(${CMAKE_PROJECT_NAME}_Tests)
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+set(QML_IMPORT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/ ${CMAKE_BINARY_DIR}/imports CACHE STRING "" FORCE)
+
+message(STATUS "QML_IMPORT_PATH: ${QML_IMPORT_PATH}")
 
 find_package(
   QT NAMES Qt6 Qt5
@@ -27,8 +31,6 @@ set(TEST_SRC_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/data.qrc)
 
 add_executable(${PROJECT_NAME} ${TEST_SRC_FILES})
-
-add_dependencies(${PROJECT_NAME} DuperAgent)
 
 target_link_libraries(${PROJECT_NAME} Qt${QT_VERSION_MAJOR}::QuickTest
                       DuperAgent)
