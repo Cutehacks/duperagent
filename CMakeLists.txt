@@ -36,13 +36,15 @@ include(cmake/ClangTidyConfig.cmake)
 
 find_package(
   QT NAMES Qt6 Qt5
-  COMPONENTS Core Qml
+  COMPONENTS Core Qml Network
   REQUIRED)
 
 find_package(
   Qt${QT_VERSION_MAJOR}
-  COMPONENTS Core Qml
+  COMPONENTS Core Qml Network
   REQUIRED)
+
+# find_package(OpenSSL)
 
 set(SRC_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/config.cpp
@@ -55,7 +57,8 @@ set(SRC_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/promisemodule.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/request.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/response.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/serialization.cpp)
+    ${CMAKE_CURRENT_SOURCE_DIR}/serialization.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/ssl.cpp)
 
 set(INCLUDE_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/config.h
@@ -70,7 +73,8 @@ set(INCLUDE_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/qpm.h
     ${CMAKE_CURRENT_SOURCE_DIR}/request.h
     ${CMAKE_CURRENT_SOURCE_DIR}/response.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/serialization.h)
+    ${CMAKE_CURRENT_SOURCE_DIR}/serialization.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/ssl.h)
 
 add_library(${PROJECT_NAME} STATIC ${SRC_FILES} ${INCLUDE_FILES})
 
@@ -79,18 +83,12 @@ target_include_directories(
                          $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE ${project_options_and_warnings})
-target_link_libraries(${PROJECT_NAME} PUBLIC Qt${QT_VERSION_MAJOR}::Core
-                                             Qt${QT_VERSION_MAJOR}::Qml)
+
+target_link_libraries(
+  ${PROJECT_NAME} PUBLIC Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Qml
+                         Qt${QT_VERSION_MAJOR}::Network)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES DEBUG_POSTFIX d)
-
-# Examples
-option(${PROJECT_NAME}_EXAMPLES "Enable Examples" OFF)
-
-if(${PROJECT_NAME}_EXAMPLES)
-  message(STATUS "Building Examples")
-  add_subdirectory(examples/faketrello)
-endif()
 
 # Install script
 option(${PROJECT_NAME}_INSTALL "Enable Installing as Library" OFF)
@@ -103,7 +101,6 @@ if(${PROJECT_NAME}_INSTALL)
     EXPORT ${PROJECT_NAME}Targets)
 
   install(FILES ${INCLUDE_FILES} DESTINATION include/${PROJECT_NAME})
-  install(FILES ${INCLUDE_PRIV_FILES} DESTINATION include/${PROJECT_NAME}/priv)
 
   include(CMakePackageConfigHelpers)
   write_basic_package_version_file(
@@ -131,4 +128,12 @@ if(${PROJECT_NAME}_INSTALL)
   install(FILES ${CMAKE_BINARY_DIR}/cmake/${PROJECT_NAME}Config.cmake
                 ${CMAKE_BINARY_DIR}/cmake/${PROJECT_NAME}Version.cmake
           DESTINATION ${CONFIG_PACKAGE_LOCATION})
+endif()
+
+option(ENABLE_TESTING "Enable Test Builds" ON)
+
+if(ENABLE_TESTING)
+  message(STATUS "Building Tests")
+  include(CTest)
+  add_subdirectory(tests)
 endif()
