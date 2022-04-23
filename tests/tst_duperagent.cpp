@@ -16,7 +16,7 @@ public:
 public slots:
     void qmlEngineAvailable(QQmlEngine * engine)    {
         com::cutehacks::duperagent::registerTypes();
-        qDebug() << engine->importPathList();
+        qDebug() << "engine->importPathList(): " << engine->importPathList();
     }
 };
 
