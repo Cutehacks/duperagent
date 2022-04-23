@@ -63,7 +63,7 @@ void CookieJar::save() const
     QList<QNetworkCookie> cookies = allCookies();
     foreach (QNetworkCookie c, cookies) {
         if (m_persistSessions || !c.isSessionCookie())
-            out << c.toRawForm() << endl;
+            out << c.toRawForm() << Qt::endl;
     }
 
     file.close();
