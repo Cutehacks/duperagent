@@ -56,6 +56,35 @@ Alternatively you can clone the repository directly and include it in your proje
 
 `include(path/to/com_cutehacks_duperagent.pri)`
 
+## With CMake
+
+Need to create a `FindDuperAgent.cmake` file somewhere in your project
+
+```cmake
+include(FetchContent)
+
+FetchContent_Declare(
+  DuperAgent
+  PREFIX "${PROJECT_BINARY_DIR}/QSyncable-build"
+      GIT_REPOSITORY "https://github.com/Cutehacks/duperagent.git"
+      CMAKE_ARGS "-DCMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}"
+                      "-DCMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}/DuperAgent"
+                      "-DCMAKE_INSTALL_LIBDIR=${PROJECT_BINARY_DIR}/DuperAgent/lib"
+                      "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
+                      )
+
+FetchContent_MakeAvailable(DuperAgent)
+```
+
+Then add it to your project and link it agains your target:
+
+```cmake
+
+include(cmake/FindDuperAgent.cmake)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE DuperAgent)
+```
+
 # Usage
 
 Once the files are compiled into your binary, DuperAgent will register it's types with the QMLEngine automatically.

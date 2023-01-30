@@ -66,6 +66,9 @@ private:
     QQmlEngine *m_engine;
 };
 
+
+void registerTypes();
+
 } } }
 
 #endif // DUPERAGENT_H

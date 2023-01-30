@@ -635,7 +635,7 @@ TestCase {
         async.wait(timeout);
 
         // This fingerprint might need to be changed when the cert is renewed
-        compare(fingerprint, "5f:f1:60:31:09:04:3e:f2:90:d2:b0:8a:50:38:04:e8:37:9f:bc:76");
+        compare(fingerprint, "29:70:30:74:ca:3c:48:f5:4a:79:c6:2d:11:57:a2:41:2a:2d:7d:5c");
     }
 
     function test_responseType_auto() {

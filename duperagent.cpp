@@ -200,25 +200,20 @@ static QObject *iu_provider(QQmlEngine *engine, QJSEngine *)
     return new ImageUtils(engine);
 }
 
-static void registerTypes()
+void registerTypes()
 {
-    qmlRegisterSingletonType<Request>(
-        DUPERAGENT_URI,
-        1, 0,
-        "request",
-        request_provider);
+    static bool registered = false;
+    if (registered) {
+        return;
+    }
+
+    registered = true;
 
     qmlRegisterSingletonType<Request>(
         DUPERAGENT_URI,
         1, 0,
         "Request",
         request_provider);
-
-    qmlRegisterSingletonType<PromiseModule>(
-        DUPERAGENT_URI,
-        1, 0,
-        "promise",
-        promise_provider);
 
     qmlRegisterSingletonType<PromiseModule>(
         DUPERAGENT_URI,
@@ -253,6 +248,13 @@ static void registerTypes()
     qmlProtectModule(DUPERAGENT_URI, 1);
 }
 
+
+
+#ifndef DUPERAGENT_DISABLE_AUTO_QML_REGISTER
 Q_COREAPP_STARTUP_FUNCTION(registerTypes)
+#endif
+
+
+
 
 } } }
